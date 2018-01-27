@@ -1,0 +1,33 @@
+.reveal .btn {
+    border: 1px solid #a23;
+    background: transparent;
+    padding: 7.5px;
+    border-radius: 2px;
+}
+
+.reveal .btn:hover{
+    background: #a23;
+    color: #222;
+}
+
+.reveal .xsmall {
+    font-size: 0.8em;
+}
+
+.reveal .projects-btn {
+    margin-top: 50px;
+}
+
+.reveal .copyright {
+    margin-top: 150px;
+}
+
+.reveal .social-icons {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.bloglink {
+    top: 10px;
+    left: 300px;
+}
