@@ -1,6 +1,5 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var userAdditionalSchemas = require('./userAdditionalSchemas');
 var passportLocalMongoose = require('passport-local-mongoose');
 
 var userSchema = new Schema({
@@ -14,58 +13,11 @@ var userSchema = new Schema({
         required: true
     },
 
-    phone: {
+    //userType: work or hire
+    userType: {
         type: String,
+        required: true
     },
-
-    location: [{
-        lat : Number,
-        long: Number,
-        locationName: String
-    }],
-
-    bio: {
-        type: String
-    },
-
-    tagline: {
-        type: String
-    },
-
-    dateOfBirth: {
-        type: Date
-    },
-
-    activatedAccount: {
-        type: Boolean,
-        default: false
-    },
-
-    verifiedAccount: {
-        type: Boolean,
-        default: false,
-    },
-
-    verifications: {
-        email: { type: Boolean, default: false },
-        mobile: { type: Boolean, default:false },
-        govtId: { type: Boolean, default:false },
-        paymentCard: { type: Boolean, default:false },
-    },
-
-    education: [userAdditionalSchemas.educationSchema],
-
-    projects: [userAdditionalSchemas.projectSchema],
-
-    workExperience: [userAdditionalSchemas.workExperienceSchema],
-
-    skills: [String],
-
-    talentCategory: [String],
-
-    ratings: [userAdditionalSchemas.ratingSchema],
-
-    overAllRating: Number,
 
 }, { timestamps: true });
 

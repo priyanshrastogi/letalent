@@ -7,30 +7,33 @@ var jobSchema = new Schema({
     description: String,
     category: [String],
     skillsReq: [String],
-    expectedDuration: Number, //In days
-    moneyRangeStart: Number,
-    moneyRangeEnd: Number,
+    payType: String, //Hour based or Fixed pay namely 'Hourly' or 'Fixed'
+    fixedPayPrice: Number,
+    estimatedDuration: Number, //In hours
+    perHourPrice: Number,
     postedBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
-    
-    interestedPeople: [jobAdditionalSchema.interestSchema],
+
+    interestedUsers: [jobAdditionalSchema.interestSchema],
     
     workingUser: {
         type: mongoose.Schema.Types.ObjectId,
          ref: 'User'
     },
+    jobFinished: { type: Boolean, default: false },
     startedOn: Date,
     finishedOn: Date,
-    actualJobDuration: Number, //In Days
-    jobFinished: { type: Boolean, default: false},
+    actualJobDuration: Number, //In hours
     finalAmount: [jobAdditionalSchema.finalAmountSchema],
     paid: {type: Boolean, default: false},
     transaction: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Transaction'
-    }
+    },
+    jobRatingByFreelancer: jobAdditionalSchema.ratingSchema,
+    workQualityRatingByPoster: jobAdditionalSchema.ratingSchema
 }, { timestamps: true });
 
 module.exports = mongoose.model('Job', jobSchema);

@@ -4,12 +4,13 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 var config = require('./config');
-
 var index = require('./routes/index');
 var users = require('./routes/users');
-
 var mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
+var passport = require('passport');
+
+
 const url = config.mongoUrl;
 var connect = mongoose.connect(url);
 connect.then((db) => {
@@ -30,6 +31,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(passport.initialize());
 
 app.use('/', index);
 app.use('/users', users);

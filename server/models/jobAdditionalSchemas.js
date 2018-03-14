@@ -17,5 +17,11 @@ var finalAmountSchema = new Schema({
     approvedByWorker: {type: Boolean, default: false}
 });
 
+var ratingSchema = new Schema({
+    ratingVal = Number,
+    review = String
+});
+
 exports.interestSchema = interestSchema;
 exports.finalAmountSchema = finalAmountSchema;
+exports.ratingSchema = ratingSchema;
