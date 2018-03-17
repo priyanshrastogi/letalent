@@ -14,10 +14,7 @@ var jobSchema = new Schema({
     postedBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
-    },
-
-    interestedUsers: [jobAdditionalSchema.interestSchema],
-    
+    },    
     workingUser: {
         type: mongoose.Schema.Types.ObjectId,
          ref: 'User'
@@ -33,7 +30,6 @@ var jobSchema = new Schema({
         ref: 'Transaction'
     },
     jobRatingByFreelancer: jobAdditionalSchema.ratingSchema,
-    workQualityRatingByPoster: jobAdditionalSchema.ratingSchema
 }, { timestamps: true });
 
 module.exports = mongoose.model('Job', jobSchema);

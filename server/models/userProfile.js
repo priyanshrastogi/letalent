@@ -74,9 +74,9 @@ var userProfileSchema = new Schema({
 
     talentCategory: [String],
 
-    ratings: [userAdditionalSchemas.ratingSchema],
-
     overAllRating: Number,
+
+    ratingCount: Number
 
 }, { timestamps: true });
 

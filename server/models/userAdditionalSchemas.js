@@ -27,20 +27,6 @@ var educationSchema = new Schema({
     current: Boolean
 }, { timestamps: true });
 
-var ratingSchema = new Schema({
-    ratingVal: Number,
-    review: String,
-    forJob: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Job'
-    },
-    ratingBy: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-    }
-}, { timestamps: true });
-
 exports.projectSchema = projectSchema;
 exports.workExperienceSchema = workExperienceSchema;
 exports.educationSchema = educationSchema;
-exports.ratingSchema = ratingSchema;
