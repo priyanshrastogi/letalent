@@ -126,7 +126,7 @@ router.post('/resetpassword/:resetpasswordtoken',(req,res)=>{
   if(tokenObj){
   UserProfile.findOne({user: tokenObj.user})
   .then((sanitizedUser)=>{
-    sanitizedUser.setPassword(req.body.password,()=>{
+    sanitizedUser.setPassword(req.body.password, function(){
             sanitizedUser.save();
             res.status(200);
             res.json({message: 'password reset successful'});
