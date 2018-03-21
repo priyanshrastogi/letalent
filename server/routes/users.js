@@ -78,8 +78,8 @@ router.get('/activate/:activationToken', (req, res) =>{
    .catch((err) => next(err));
 });
 
-router.post('/forgotpassword/:username' , (req, res) => {
-  User.findOne({username: req.params.username})
+router.post('/forgotpassword/:email' , (req, res) => {
+  User.findOne({email: req.params.email})
   .then((user) => {
     if(user) {
       crypto.randomBytes(32, (err, buff) => {
@@ -103,13 +103,12 @@ router.post('/forgotpassword/:username' , (req, res) => {
 });
 
 
-router.get('/resetpassword/:resetpasswordtoken',(req,res)=>{//to check if token actually exists
-  resetPasswordToken.findOne({token:req.params.resetpasswordtoken})
+router.get('/resetpassword/:resetpasswordtoken',(req,res,next)=>{//to check if token actually exists
+  ResetPasswordToken.findOne({token:req.params.resetpasswordtoken})
   .then((tokenObj)=>{
      if(tokenObj){
        res.statusCode = 200;
-       res.setHeader('Content-Type', 'application/json');
-       res.json("Suck it");
+       res.end();
      }
     else{
       err = new Error('Not found');
@@ -120,16 +119,16 @@ router.get('/resetpassword/:resetpasswordtoken',(req,res)=>{//to check if token 
   .catch((err) => next(err));
 });
 
-router.post('/resetpassword/:resetpasswordtoken',(req,res)=>{
-  resetPasswordToken.findOne({token:req.params.resetpasswordtoken})
+router.post('/resetpassword/:resetpasswordtoken',(req,res,next)=>{
+  ResetPasswordToken.findOne({token:req.params.resetpasswordtoken})
   .then((tokenObj)=>{
   if(tokenObj){
-  UserProfile.findOne({user: tokenObj.user})
+  User.findById(tokenObj.user)
   .then((sanitizedUser)=>{
     sanitizedUser.setPassword(req.body.password, function(){
             sanitizedUser.save();
             res.status(200);
-            res.json({message: 'password reset successful'});
+            res.json({message: 'Password Reset Successful'});
         });
   },(err) => next(err))
 }
