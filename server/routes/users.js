@@ -5,6 +5,7 @@ var crypto = require('crypto');
 var User = require('../models/user');
 var UserProfile = require('../models/userProfile');
 var UserActivationToken = require('../models/userActivationToken');
+var ResetPasswordToken = require('../models/resetPasswordToken');
 var authenticate = require('../authenticate');
 var router = express.Router();
 
@@ -54,9 +55,93 @@ router.post('/login', passport.authenticate('local'), (req, res) => {
   res.json({ success: true, token: token, user: { _id: req.user._id, name: req.user.name, username: req.user.username, userType: req.user.userType }});
 });
 
-router.get('/resetpassword', (req, res) => {
+router.get('/activate/:activationToken', (req, res) =>{
+   UserActivationToken.findOne({token: req.params.activationToken})//finding the token
+  .then((tokenObj) => {
+    if(tokenObj) {
+      UserProfile.findOneAndUpdate({user: tokenObj.user}, {activatedAccount: true}, {new: true})//userprofile ki user field with useractivationtoken ki user field
+      .then((userProfile) => {
+        UserActivationToken.findOneAndRemove({_id: tokenObj._id})
+        .then(() => {
+          res.statusCode = 200;
+          res.setHeader('Content-Type', 'application/json');
+          res.json({status: "Account Activated"});
+        });
+      });
+    }
+    else {
+      err = new Error('Activation token not found');
+      err.status = 404;
+      return next(err);
+    }
+  },(err) => next(err))
+   .catch((err) => next(err));
+});
 
-})
+router.post('/forgotpassword/:username' , (req, res) => {
+  User.findOne({username: req.params.username})
+  .then((user) => {
+    if(user) {
+      crypto.randomBytes(32, (err, buff) => {
+        const token = buff.toString('hex');
+        ResetPasswordToken.create({ token, user: user._id })
+        .then(() => {
+          //Mail Reset Password Link
+          res.statusCode = 200;
+          res.setHeader('Content-Type', 'application/json');
+          res.json({status: "Reset Password Link Sent"});
+        });
+      })
+    }
+    else {
+      err = new Error('User not found');
+      err.status = 404;
+      return next(err);
+    }
+  }, (err) => next(err))
+  .catch((err) => next(err));
+});
+
+
+router.get('/resetpassword/:resetpasswordtoken',(req,res)=>{//to check if token actually exists
+  resetPasswordToken.findOne({token:req.params.resetpasswordtoken})
+  .then((tokenObj)=>{
+     if(tokenObj){
+       res.statusCode = 200;
+       res.setHeader('Content-Type', 'application/json');
+       res.json("Suck it");
+     }
+    else{
+      err = new Error('Not found');
+      err.status = 404;
+      return next(err);
+    }
+  },(err) => next(err))
+  .catch((err) => next(err));
+});
+
+router.post('/resetpassword/:resetpasswordtoken',(req,res)=>{
+  resetPasswordToken.findOne({token:req.params.resetpasswordtoken})
+  .then((tokenObj)=>{
+  if(tokenObj){
+  UserProfile.findOne({user: tokenObj.user})
+  .then((sanitizedUser)=>{
+    sanitizedUser.setPassword(req.body.password,()=>{
+            sanitizedUser.save();
+            res.status(200);
+            res.json({message: 'password reset successful'});
+        });
+  },(err) => next(err))
+}
+else{
+  err = new Error('Not found');
+  err.status = 404;
+  return next(err);
+ }
+},(err) => next(err))
+  .catch((err) => next(err));
+});
+
 
 router.get('/:userId', (req, res, next) => {
   User.findById(req.params.userId)
