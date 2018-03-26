@@ -14,7 +14,7 @@ var jobSchema = new Schema({
     postedBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
-    },    
+    },
     workingUser: {
         type: mongoose.Schema.Types.ObjectId,
          ref: 'User'
@@ -32,4 +32,5 @@ var jobSchema = new Schema({
     jobRatingByFreelancer: jobAdditionalSchema.ratingSchema,
 }, { timestamps: true });
 
-module.exports = mongoose.model('Job', jobSchema);
+var Jobs = mongoose.model('Job', jobSchema);
+module.exports = Jobs;
