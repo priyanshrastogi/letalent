@@ -103,7 +103,7 @@ router.post('/forgotpassword/:email' , (req, res) => {
 });
 
 
-router.get('/resetpassword/:resetpasswordtoken',(req,res,next)=>{//to check if token actually exists
+router.get('/resetpassword/:resetpasswordtoken',(req,res,next)=>{//to check if token actually exists and open forgot password page
   ResetPasswordToken.findOne({token:req.params.resetpasswordtoken})
   .then((tokenObj)=>{
      if(tokenObj){

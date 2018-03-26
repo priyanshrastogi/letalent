@@ -1,25 +1,41 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import reduxThunk from 'redux-thunk';
+import reducers from './reducers';
 import registerServiceWorker from './registerServiceWorker';
-import reducers from './reducers'
+import Footer from './components/footer';
+import Home from './components/home';
+import Login from './components/login';
+import SignUp from './components/signup';
+import SignOut from './components/signout';
+import ForgotPassword from './components/forgotpassword';
+import UserProfile from './components/userprofile';
+import Page404 from './components/page404';
+import { LOGIN_USER } from './actions/types';
 
 const createStoreWithMiddleware = applyMiddleware(reduxThunk)(createStore);
 const store = createStoreWithMiddleware(reducers);
 
+const token = localStorage.getItem('token');
+
+if(token) {
+    store.dispatch({ type: LOGIN_USER });
+}
+
 ReactDOM.render(<Provider store={store}>
         <BrowserRouter>
             <div>
-                <NavBar />
                 <Switch>
                     <Route exact path="/" component={Home} />
                     <Route exact path="/login" component={Login} />
                     <Route exact path="/signup" component={SignUp} />
-                    <Route exact path="/signout" component={SignOut}/>
-                    <Route exact path="/poolreqs/new" component={NewPoolRequest}/>
+                    <Route exact path="/logout" component={SignOut} />
+                    <Route exact path="/forgotpassword" component={ForgotPassword} />
+                    <Route exact path="/@:username" component={UserProfile} />
+                    <Route component={Page404} />
                 </Switch>
                 <Footer />
             </div>
