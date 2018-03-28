@@ -47,6 +47,8 @@ class SignUp extends Component {
     }
 
     onSubmit(values) {
+        values.username = values.username.toLowerCase();
+        values.email = values.email.toLowerCase();
         console.log(values);
         this.props.signUpUser(values, () => this.props.history.push(`/@${values.username}`))
     };
@@ -103,20 +105,25 @@ class SignUp extends Component {
 function validate(values) {
     const errors = {};
 
-    if (!values.name) {
-        errors.name = 'Name cannot be empty';
+    if (!values.name || values.name.trim().length<=4) {
+        errors.name = 'Invalid Name';
     }
 
-    if (!values.username) {
-        errors.username = 'Username cannot be empty';
+    if (!values.username || values.username.trim().length <= 3) {
+        errors.username = 'Username should be atleast 3 characters long';
     }
 
-    if (!values.email) {
-        errors.email = 'Email cannot be empty';
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if (!values.email || !re.test(values.email.toLowerCase())) {
+        errors.email = 'Invalid Email'
     }
 
-    if (!values.password) {
-        errors.password = 'Password cannot be empty';
+    if (!values.password || values.password.length < 8) {
+        errors.password = 'Password should be atleast 8 characters long';
+    }
+
+    if (!values.userType) {
+        errors.userType = 'Select a user type'
     }
 
     return errors

@@ -11,6 +11,7 @@ export function loginUser(cred, callback) {
             localStorage.setItem('username', res.data.user.username);
             localStorage.setItem('name', res.data.user.name);
             localStorage.setItem('userId', res.data.user._id);
+            localStorage.setItem('userType', res.data.user.userType);
             dispatch({ type: LOGIN_USER });
             callback();
         })
@@ -39,6 +40,7 @@ export function logOutUser(callback) {
         localStorage.removeItem('userId');
         localStorage.removeItem('username');
         localStorage.removeItem('name');
+        localStorage.removeItem('userType');
         dispatch({ type: LOGOUT_USER });
         callback();
     }
@@ -52,6 +54,7 @@ export function signUpUser(cred, callback) {
             localStorage.setItem('userId', res.data.user._id);
             localStorage.setItem('username', res.data.user.username);
             localStorage.setItem('name', res.data.user.name);
+            localStorage.setItem('userType', res.data.user.userType);
             dispatch({ type: LOGIN_USER });
             callback();
         })

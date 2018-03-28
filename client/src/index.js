@@ -12,7 +12,8 @@ import Login from './components/login';
 import SignUp from './components/signup';
 import SignOut from './components/signout';
 import ForgotPassword from './components/forgotpassword';
-import UserProfile from './components/userprofile';
+import UserProfile from './components/userprofile/privateprofile';
+import AddNewJob from './components/addnewjob';
 import Page404 from './components/page404';
 import { LOGIN_USER } from './actions/types';
 
@@ -35,6 +36,7 @@ ReactDOM.render(<Provider store={store}>
                     <Route exact path="/logout" component={SignOut} />
                     <Route exact path="/forgotpassword" component={ForgotPassword} />
                     <Route exact path="/@:username" component={UserProfile} />
+                    <Route exact path="/jobs/new" component={AddNewJob} />
                     <Route component={Page404} />
                 </Switch>
                 <Footer />

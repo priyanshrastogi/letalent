@@ -26,6 +26,7 @@ class Login extends Component {
     }
 
     onSubmit(cred) {
+        cred.username = cred.username.toLowerCase();
         if (queryString.parse(this.props.location.search).next!=undefined) {
             this.props.loginUser(cred, () => this.props.history.push(`${queryString.parse(this.props.location.search).next}`));
         }
@@ -39,13 +40,13 @@ class Login extends Component {
     renderSignUpLink() {
         if (queryString.parse(this.props.location.search).next!=undefined) {
             return (
-                <p>Don't have an account yet? <Link to={`/signup?next=${queryString.parse(this.props.location.search).next}`}>Sign Up</Link></p>
+                <p><strong>Don't have an account yet? <Link to={`/signup?next=${queryString.parse(this.props.location.search).next}`}>Sign Up</Link></strong></p>
             )
         }
 
         else {
             return (
-                <p>Don't have an account yet? <Link to="/signup">Sign Up</Link></p>
+                <p><strong>Don't have an account yet? <Link to="/signup">Sign Up</Link></strong></p>
             )
         }
     }

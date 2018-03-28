@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Field, reduxForm } from 'redux-form';
 import { Link, Redirect } from 'react-router-dom';
-import NavBarChange from './navbarchange';
+import NavBarChange from '../navbarchange';
 import _ from 'lodash';
+import AddEducation from './addeducation';
+import AddExperience from './addexperience';
+import AddSkills from './addskills';
 
 class UserProfile extends Component {
 
@@ -74,6 +76,8 @@ class UserProfile extends Component {
                             <div className="profile-content">
                                 <div className="container">
                                     <div className="row">
+                                        <a className="btn btn-link d-none d-sm-block" style={{ position: 'absolute', top: '8px', right: '16px' }}><i className="fa fa-edit"></i> <strong>Edit Profile</strong></a>
+                                        <a className="btn btn-link btn-just-icon d-sm-none" style={{ position: 'absolute', top: '8px', right: '16px' }}><i className="fa fa-edit"></i></a>
                                         <div className="col-md-6 ml-auto mr-auto">
                                             <div className="profile">
                                                 <div className="avatar">
@@ -82,9 +86,9 @@ class UserProfile extends Component {
                                                 <div className="name">
                                                     <h3 className="title">{`${localStorage.getItem('name')}`}</h3>
                                                     <h6>Full Stack Web Developer</h6>
-                                                    <a href="#pablo" className="btn btn-just-icon btn-link btn-dribbble"><i className="fa fa-twitter"></i></a>
-                                                    <a href="#pablo" className="btn btn-just-icon btn-link btn-twitter"><i className="fa fa-github"></i></a>
-                                                    <a href="#pablo" className="btn btn-just-icon btn-link btn-pinterest"><i className="fa fa-linkedin"></i></a>
+                                                    <a href="#pablo" className="btn btn-just-icon btn-link"><i className="fa fa-twitter"></i></a>
+                                                    <a href="#pablo" className="btn btn-just-icon btn-link"><i className="fa fa-github"></i></a>
+                                                    <a href="#pablo" className="btn btn-just-icon btn-link"><i className="fa fa-linkedin"></i></a>
                                                 </div>
                                             </div>
                                         </div>
@@ -137,7 +141,7 @@ class UserProfile extends Component {
                                                             {this.renderExperience()}
                                                         </ul>
                                                         <div className="col-8 ml-auto mr-auto text-center">
-                                                            <button className="btn btn-sm btn-success">Add Experience</button>
+                                                            <button className="btn btn-sm btn-success" data-toggle="modal" data-target="#addExperienceModal">Add Experience</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -148,7 +152,7 @@ class UserProfile extends Component {
                                                             {this.renderSkills()}
                                                         </ul>
                                                         <div className="col-8 ml-auto mr-auto text-center">
-                                                            <button className="btn btn-sm btn-warning">Add Skills</button>
+                                                            <button className="btn btn-sm btn-warning" data-toggle="modal" data-target="#addSkillsModal">Add Skills</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -159,7 +163,7 @@ class UserProfile extends Component {
                                                             {this.renderEducation()}
                                                         </ul>
                                                         <div className="col-8 ml-auto mr-auto text-center">
-                                                            <button className="btn btn-sm btn-danger">Add Education</button>
+                                                            <button className="btn btn-sm btn-danger" data-toggle="modal" data-target="#addEducationModal">Add Education</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -202,6 +206,9 @@ class UserProfile extends Component {
                             </div>
                         </div>
                     </div>
+                    <AddEducation />
+                    <AddExperience />
+                    <AddSkills/>
                 </div>
             );
         }

@@ -9,22 +9,30 @@ class NavBarChange extends Component {
             return(
                 <ul className="navbar-nav ml-auto">
                     <li className="nav-item">
-                        <Link className="nav-link" to="/jobs"><strong>Find Jobs</strong></Link>
-                    </li>
-                    <li className="nav-item">
-                        <Link className="nav-link" to={`@${localStorage.getItem('username')}`}><strong>{localStorage.getItem('name').split(' ')[0]}</strong></Link>
+                        {localStorage.getItem('userType') === 'work' ?
+                            <Link className="nav-link" to="/jobs"><strong>Find Jobs</strong></Link> :
+                            <Link className="nav-link" to="/jobs/new"><strong>Post A Job</strong></Link>
+                        }
                     </li>
                     <li className="nav-item dropdown">
-                        <Link className="nav-link" to="/login" data-toggle="dropdown"><i className="material-icons">notifications</i></Link>
+                        <Link className="nav-link" to="#" data-toggle="dropdown"><strong>{localStorage.getItem('name').split(' ')[0]}</strong></Link>
+                        <div className="dropdown-menu">
+                            <Link className="dropdown-item" to={`/@${localStorage.getItem('username')}`}>Profile</Link>
+                            <Link className="dropdown-item" to={`/@${localStorage.getItem('username')}/jobs`}>My Jobs</Link>
+                            <Link className="dropdown-item" to={`/@${localStorage.getItem('username')}/proposals`}>My Proposals</Link>
+                        </div>
+                    </li>
+                    <li className="nav-item dropdown">
+                        <Link className="nav-link" to="#" data-toggle="dropdown"><i className="material-icons">notifications</i></Link>
                         <div className="dropdown-menu">
                             <a className="dropdown-item" href="#">Notifications Show Up Here</a>
                         </div>
                     </li>
                     <li className="nav-item">
-                        <Link className="nav-link" to="/login"><i className="material-icons">chat</i></Link>
+                        <Link className="nav-link" to="#"><i className="material-icons">chat</i></Link>
                     </li>
                     <li className="nav-item dropdown">
-                        <Link className="nav-link" to="/login" data-toggle="dropdown"><i className="material-icons">settings</i></Link>
+                        <Link className="nav-link" to="#" data-toggle="dropdown"><i className="material-icons">settings</i></Link>
                         <div className="dropdown-menu">
                             <Link className="dropdown-item" to="/settings">Settings</Link>
                             <Link className="dropdown-item" to="/logout">Logout</Link>
