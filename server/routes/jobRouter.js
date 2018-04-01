@@ -60,3 +60,5 @@ jobRouter.delete('/:jobId',(req, res, next) => {
   }, (err) => next(err))
   .catch((err) => next(err));
 });
+
+module.exports = jobRouter;

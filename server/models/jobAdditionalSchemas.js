@@ -8,8 +8,8 @@ var finalAmountSchema = new Schema({
 });
 
 var ratingSchema = new Schema({
-    ratingVal = Number,
-    review = String
+    ratingVal: Number,
+    review: String
 });
 
 exports.finalAmountSchema = finalAmountSchema;

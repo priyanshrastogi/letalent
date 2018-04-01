@@ -48,14 +48,14 @@ router.post('/signup', (req,res,next) => {
   });
 });
 
-router.post('/login', passport.authenticate('local'), (req, res) => {
+router.post('/login', passport.authenticate('local'), (req, res, next) => {
   var token = authenticate.getToken({_id: req.user._id});
   res.statusCode = 200;
   res.setHeader('Content-Type', 'application/json');
   res.json({ success: true, token: token, user: { _id: req.user._id, name: req.user.name, username: req.user.username, userType: req.user.userType }});
 });
 
-router.get('/activate/:activationToken', (req, res) =>{
+router.get('/activate/:activationToken', (req, res, next) =>{
    UserActivationToken.findOne({token: req.params.activationToken})//finding the token
   .then((tokenObj) => {
     if(tokenObj) {
@@ -78,7 +78,7 @@ router.get('/activate/:activationToken', (req, res) =>{
    .catch((err) => next(err));
 });
 
-router.post('/forgotpassword/:email' , (req, res) => {
+router.post('/forgotpassword/:email' , (req, res, next) => {
   User.findOne({email: req.params.email})
   .then((user) => {
     if(user) {
