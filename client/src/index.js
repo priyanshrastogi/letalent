@@ -13,8 +13,11 @@ import SignUp from './components/signup';
 import SignOut from './components/signout';
 import ForgotPassword from './components/forgotpassword';
 import UserProfile from './components/userprofile/privateprofile';
+import JobSearch from './components/jobssearch';
+import JobDetails from './components/jobdetails';
 import AddNewJob from './components/addnewjob';
 import Page404 from './components/page404';
+import Dashboard from './components/dashboard';
 import { LOGIN_USER } from './actions/types';
 
 const createStoreWithMiddleware = applyMiddleware(reduxThunk)(createStore);
@@ -36,7 +39,10 @@ ReactDOM.render(<Provider store={store}>
                     <Route exact path="/logout" component={SignOut} />
                     <Route exact path="/forgotpassword" component={ForgotPassword} />
                     <Route exact path="/@:username" component={UserProfile} />
+                    <Route exact path="/dashboard" component={Dashboard} />
+                    <Route exact path="/jobs" component={JobSearch} />
                     <Route exact path="/jobs/new" component={AddNewJob} />
+                    <Route exact path="/jobs/:jobsId" component={JobDetails} />
                     <Route component={Page404} />
                 </Switch>
                 <Footer />
