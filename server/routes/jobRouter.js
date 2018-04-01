@@ -4,12 +4,13 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const Jobs = require('../models/job');
 
+var authenticate = require('../authenticate');
 const jobRouter = express.Router();
 
 jobRouter.use(bodyParser.json());
 
-jobRouter.get('/',(req,res,next) => {
-    Jobs.find({})
+jobRouter.get('/:from-:to',(req,res,next) => {
+    Jobs.find({skip: req.params.from, limit: req.params.to})
     .then((jobs) => {
       res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');
@@ -18,18 +19,31 @@ jobRouter.get('/',(req,res,next) => {
      .catch((err) => next(err));
 });
 
-jobRouter.post('/',(req, res, next) => {
+
+jobRouter.post('/',authenticate.verifyUser,(req, res, next) => {
     Jobs.create(req.body)
-    .then((job)=>{
-      console.log('Job Created ',job);
-      res.statusCode = 200;
-      res.setHeader('Content-Type', 'application/json');
-      res.json(job);
-    },(err) => next(err))
-      .catch((err) => next(err));
+    .then((job) => {
+        if (job != null) {
+            req.body.postedBy = req.user._id;//user's ID matches the id of the comment's author
+            job.save()
+            .then((job) => {
+                res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/json');
+                res.json(job);
+            }, (err) => next(err));
+        }
+        else {
+            err = new Error('Job not found');
+            err.status = 404;
+            return next(err);
+        }
+    }, (err) => next(err))
+    .catch((err) => next(err));
 });
 
-jobRouter.get('/:jobId',(req,res,next) => {
+
+jobRouter.route('/:jobId')
+.get((req,res,next)  => {
   Jobs.findById(req.params.jobId)
   .then((job) => {
         res.statusCode = 200;
@@ -37,9 +51,8 @@ jobRouter.get('/:jobId',(req,res,next) => {
         res.json(job);
     },(err) => next(err))
      .catch((err) => next(err));
-});
-
-jobRouter.put('/:jobId',(req, res, next) => {
+})
+.put((req, res, next) => {
   Jobs.findByIdAndUpdate(req.params.jobId, {
          $set: req.body
      }, { new: true })
@@ -49,9 +62,8 @@ jobRouter.put('/:jobId',(req, res, next) => {
         res.json(job);
     }, (err) => next(err))
     .catch((err) => next(err));
-});
-
-jobRouter.delete('/:jobId',(req, res, next) => {
+})
+.delete((req, res, next) => {
   Jobs.findByIdAndRemove(req.params.jobId)
   .then((resp) => {
       res.statusCode = 200;
