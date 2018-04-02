@@ -1,8 +1,8 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var interestSchema = new Schema({
-    interestedUser: {
+var proposalSchema = new Schema({
+    proposalUser: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
@@ -13,8 +13,10 @@ var interestSchema = new Schema({
     proposal: {
         type: String
     },
+    daysToComplete: Number,
+    proposedPrice: Number,
     status: {type: String, default: "pending"},
 }, { timestamps: true });
 
 
-module.exports = mongoose.model('InterestedUserInJob', interestSchema);
+module.exports = mongoose.model('Proposal', proposalSchema);

@@ -19,7 +19,6 @@ jobRouter.get('/:from-:to',(req,res,next) => {
      .catch((err) => next(err));
 });
 
-
 jobRouter.post('/',authenticate.verifyUser,(req, res, next) => {
     Jobs.create(req.body)
     .then((job) => {
@@ -40,7 +39,6 @@ jobRouter.post('/',authenticate.verifyUser,(req, res, next) => {
     }, (err) => next(err))
     .catch((err) => next(err));
 });
-
 
 jobRouter.route('/:jobId')
 .get((req,res,next)  => {

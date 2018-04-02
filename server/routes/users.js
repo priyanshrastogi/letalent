@@ -102,7 +102,6 @@ router.post('/forgotpassword/:email' , (req, res, next) => {
   .catch((err) => next(err));
 });
 
-
 router.get('/resetpassword/:resetpasswordtoken',(req,res,next)=>{//to check if token actually exists and open forgot password page
   ResetPasswordToken.findOne({token:req.params.resetpasswordtoken})
   .then((tokenObj)=>{
@@ -133,19 +132,18 @@ router.post('/resetpassword/:resetpasswordtoken',(req,res,next)=>{
             res.json({message: 'Password Reset Successful'});
         });
   },(err) => next(err))
-}
-else{
-  err = new Error('Not found');
-  err.status = 404;
-  return next(err);
- }
+  }
+  else{
+    err = new Error('Not found');
+    err.status = 404;
+    return next(err);
+  }
 },(err) => next(err))
   .catch((err) => next(err));
 });
 
-
 router.get('/:userId', (req, res, next) => {
-  User.findById(req.params.userId)
+  UserProfile.findById(req.params.userId).populate('user')
   .then((user) => {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
