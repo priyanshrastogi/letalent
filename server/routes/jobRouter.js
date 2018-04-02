@@ -21,23 +21,13 @@ jobRouter.get('/:from-:to',(req,res,next) => {
 
 
 jobRouter.post('/',authenticate.verifyUser,(req, res, next) => {
+    req.body.postedBy = req.user._id;//user's ID matches the id of the comment's author
     Jobs.create(req.body)
     .then((job) => {
-        if (job != null) {
-            req.body.postedBy = req.user._id;//user's ID matches the id of the comment's author
-            job.save()
-            .then((job) => {
-                res.statusCode = 200;
-                res.setHeader('Content-Type', 'application/json');
-                res.json(job);
-            }, (err) => next(err));
-        }
-        else {
-            err = new Error('Job not found');
-            err.status = 404;
-            return next(err);
-        }
-    }, (err) => next(err))
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      res.json(job)
+    },(err) => next(err))
     .catch((err) => next(err));
 });
 
