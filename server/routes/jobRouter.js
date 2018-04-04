@@ -9,8 +9,8 @@ const jobRouter = express.Router();
 
 jobRouter.use(bodyParser.json());
 
-jobRouter.get('/:from-:to',(req,res,next) => {
-    Jobs.find({skip: req.params.from, limit: req.params.to})
+jobRouter.get('/',(req,res,next) => {
+    Jobs.find({})
     .then((jobs) => {
       res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');
@@ -56,14 +56,14 @@ jobRouter.route('/:jobId')
   .then((resp) => {
       res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');
-      res.json(resp);
+      res.json("Deletion Successful");
   }, (err) => next(err))
   .catch((err) => next(err));
 });
 
 jobRouter.route('/:jobId/proposals')
 .get((req,res,next) => {
-    Proposals.find(req.params.jobId)
+    Proposals.find({job: req.params.jobId})
     .then((proposals) => {
         if (proposals!= null) {
             res.statusCode = 200;
@@ -80,6 +80,7 @@ jobRouter.route('/:jobId/proposals')
 })
 .post(authenticate.verifyUser,(req, res, next) => {
     req.body.proposalUser = req.user._id;
+    req.body.job = req.params.jobId;
     Proposals.create(req.body)
     .then((proposal) => {
         if (proposal != null) {
@@ -104,7 +105,7 @@ jobRouter.route('/:jobId/proposals')
 });
 
 jobRouter.get('/:jobId/proposals/:proposalId',(req,res,next) => {
-    Proposals.find(req.params.jobId)
+    Proposals.find({job:req.params.jobId})
     .then((proposals) => {
         if (proposals!= null) {
           for (var i = (proposals.length -1); i >= 0; i--) {
@@ -133,7 +134,7 @@ jobRouter.get('/:jobId/proposals/:proposalId',(req,res,next) => {
 
 jobRouter.post('/:jobId/proposals/:proposalId/accept',authenticate.verifyUser,(req,res,next) => {
     req.body.proposalUser = req.user._id
-    Proposal.findById(req.params.proposalId)
+    Proposals.findById(req.params.proposalId)
     .then((proposal) => {
       if(proposal!=null){
       proposal.status = "accepted";
