@@ -14,13 +14,11 @@ class NavBarDefault extends Component {
                             <Link className="nav-link" to="/jobs/new"><strong>Post A Job</strong></Link>
                         }
                     </li>
-                    <li className="nav-item dropdown">
-                        <Link className="nav-link" to="#" data-toggle="dropdown"><strong>{localStorage.getItem('name').split(' ')[0]}</strong></Link>
-                        <div className="dropdown-menu">
-                            <Link className="dropdown-item" to={`/@${localStorage.getItem('username')}`}>Profile</Link>
-                            <Link className="dropdown-item" to={`/@${localStorage.getItem('username')}/jobs`}>My Jobs</Link>
-                            <Link className="dropdown-item" to={`/@${localStorage.getItem('username')}/proposals`}>My Proposals</Link>
-                        </div>
+                    <li className="nav-item">
+                        <Link className="nav-link" to="/dashboard"><strong>Dashboard</strong></Link>
+                    </li>
+                    <li className="nav-item">
+                        <Link className="nav-link" to={`/@${localStorage.getItem('username')}`}><strong>Profile</strong></Link>
                     </li>
                     <li className="nav-item dropdown">
                         <Link className="nav-link" to="#" data-toggle="dropdown"><i className="material-icons">notifications</i></Link>

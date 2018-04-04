@@ -48,14 +48,14 @@ router.post('/signup', (req,res,next) => {
   });
 });
 
-router.post('/login', passport.authenticate('local'), (req, res) => {
+router.post('/login', passport.authenticate('local'), (req, res, next) => {
   var token = authenticate.getToken({_id: req.user._id});
   res.statusCode = 200;
   res.setHeader('Content-Type', 'application/json');
   res.json({ success: true, token: token, user: { _id: req.user._id, name: req.user.name, username: req.user.username, userType: req.user.userType }});
 });
 
-router.get('/activate/:activationToken', (req, res) =>{
+router.get('/activate/:activationToken', (req, res, next) =>{
    UserActivationToken.findOne({token: req.params.activationToken})//finding the token
   .then((tokenObj) => {
     if(tokenObj) {
@@ -78,7 +78,7 @@ router.get('/activate/:activationToken', (req, res) =>{
    .catch((err) => next(err));
 });
 
-router.post('/forgotpassword/:email' , (req, res) => {
+router.post('/forgotpassword/:email' , (req, res, next) => {
   User.findOne({email: req.params.email})
   .then((user) => {
     if(user) {
@@ -101,7 +101,6 @@ router.post('/forgotpassword/:email' , (req, res) => {
   }, (err) => next(err))
   .catch((err) => next(err));
 });
-
 
 router.get('/resetpassword/:resetpasswordtoken',(req,res,next)=>{//to check if token actually exists and open forgot password page
   ResetPasswordToken.findOne({token:req.params.resetpasswordtoken})
@@ -133,19 +132,18 @@ router.post('/resetpassword/:resetpasswordtoken',(req,res,next)=>{
             res.json({message: 'Password Reset Successful'});
         });
   },(err) => next(err))
-}
-else{
-  err = new Error('Not found');
-  err.status = 404;
-  return next(err);
- }
+  }
+  else{
+    err = new Error('Not found');
+    err.status = 404;
+    return next(err);
+  }
 },(err) => next(err))
   .catch((err) => next(err));
 });
 
-
 router.get('/:userId', (req, res, next) => {
-  User.findById(req.params.userId)
+  UserProfile.findById(req.params.userId).populate('user')
   .then((user) => {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');

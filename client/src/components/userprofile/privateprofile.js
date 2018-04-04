@@ -208,7 +208,7 @@ class UserProfile extends Component {
                     </div>
                     <AddEducation />
                     <AddExperience />
-                    <AddSkills/>
+                    <AddSkills />
                 </div>
             );
         }

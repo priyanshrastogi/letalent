@@ -6,6 +6,7 @@ var bodyParser = require('body-parser');
 var config = require('./config');
 var index = require('./routes/index');
 var users = require('./routes/users');
+var jobs = require('./routes/jobRouter');
 var mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
 var passport = require('passport');

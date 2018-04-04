@@ -15,6 +15,10 @@ var jobSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
+    proposals: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Proposal'
+    }],
     workingUser: {
         type: mongoose.Schema.Types.ObjectId,
          ref: 'User'
