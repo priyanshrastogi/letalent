@@ -1,5 +1,5 @@
 const express = require('express');
-const bodyParser = require('body-parser');
+
 
 const mongoose = require('mongoose');
 const Jobs = require('../models/job');
@@ -7,7 +7,7 @@ const Proposals = require('../models/proposal');
 var authenticate = require('../authenticate');
 const jobRouter = express.Router();
 
-jobRouter.use(bodyParser.json());
+
 
 jobRouter.get('/',(req,res,next) => {
     Jobs.find({})
