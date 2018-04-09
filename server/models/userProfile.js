@@ -41,6 +41,11 @@ var userProfileSchema = new Schema({
         default: false,
     },
 
+    perHourRate: {
+        type: Number,
+        default: 0
+    },
+
     socialLinks: {
         facebook: String,
         twitter: String,

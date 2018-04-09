@@ -23,6 +23,7 @@ var jobSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
          ref: 'User'
     },
+    viewsNumber: {type: Number, default: 0},
     jobFinished: { type: Boolean, default: false },
     startedOn: Date,
     finishedOn: Date,
@@ -33,6 +34,7 @@ var jobSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Transaction'
     },
+    tag: {type: String, default: null},
     jobRatingByFreelancer: jobAdditionalSchema.ratingSchema,
 }, { timestamps: true });
 
