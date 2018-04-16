@@ -7,6 +7,7 @@ var UserProfile = require('../models/userProfile');
 var UserActivationToken = require('../models/userActivationToken');
 var ResetPasswordToken = require('../models/resetPasswordToken');
 var authenticate = require('../authenticate');
+var mailer = require('../mailer');
 var router = express.Router();
 
 /* GET users listing. */
@@ -39,8 +40,18 @@ router.post('/signup', (req,res,next) => {
               var token = authenticate.getToken({ _id: req.user._id });
               res.statusCode = 200;
               res.setHeader('Content-Type', 'application/json');
-              res.json({ success: true, token: token, user: { _id: user._id, name: user.name, username: user.username, userType: user.userType } });
+              res.json({ success: true, token: token, user: { _id: user._id, name: user.name, username: user.username, userType: user.userType , email:user.email}});
+
               //Send Mail
+              if(user.userType == 'work'){
+                var link = `http://localhost:8000/users/activate/${token}`;
+                mailer.sendActivationMail(user.email,user.name,link);
+              }
+              else{
+                var link = `http://localhost:8000/users/activate/${token}`;
+                mailer.sendActivation2Mail(user.email,user.name,link);
+              }
+
           }))
         })
       );
@@ -85,11 +96,13 @@ router.post('/forgotpassword/:email' , (req, res, next) => {
       crypto.randomBytes(32, (err, buff) => {
         const token = buff.toString('hex');
         ResetPasswordToken.create({ token, user: user._id })
-        .then(() => {
+        .then((tokenObj) => {
           //Mail Reset Password Link
+          const link = `http://localhost:8000/users/resetpassword/${token}`;
+          mailer.sendForgotPasswordMail(req.params.email,link);
           res.statusCode = 200;
           res.setHeader('Content-Type', 'application/json');
-          res.json({status: "Reset Password Link Sent"});
+          res.json({status: "Reset password link sent"});
         });
       })
     }
