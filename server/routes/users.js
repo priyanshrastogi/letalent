@@ -126,7 +126,7 @@ router.get('/resetpassword/:resetpasswordtoken',(req,res,next)=>{//to check if t
       err.status = 404;
       return next(err);
     }
-  },(err) => next(err))
+  })
   .catch((err) => next(err));
 });
 
@@ -135,23 +135,20 @@ router.post('/resetpassword/:resetpasswordtoken',(req,res,next)=>{
   .then((tokenObj)=>{
   if(tokenObj){
   User.findById(tokenObj.user)
-  .then((sanitizedUser)=>{
-    console.log(sanitizedUser.username);
-    sanitizedUser.setPassword(req.body.password, function(err, user){
-            console.log(user);
-            user.save();
-            res.status(200);
-            res.json({message: 'Password Reset Successful'});
-        });
-  },(err) => next(err))
-  }
-  else{
-    err = new Error('Not found');
-    err.status = 404;
-    return next(err);
-  }
-},(err) => next(err))
+  .then((user)=>{
+    if(user!=null) {
+      user.password = req.body.password;
+      user.save();
+      res.status(200).json({success: true});
+    }
+    else{
+      err = new Error('Not found');
+      err.status = 404;
+      return next(err);
+    }
+  })
   .catch((err) => next(err));
+  }})
 });
 
 router.get('/:userId', (req, res, next) => {
