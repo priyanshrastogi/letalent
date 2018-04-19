@@ -53,7 +53,7 @@ class Login extends Component {
 
     render() {
 
-        const { handleSubmit } = this.props //property added by Redux Form to handle form submit.
+        const { handleSubmit, submitting } = this.props //property added by Redux Form to handle form submit.
 
         if(this.props.authenticated) {
             return <Redirect to={`/@${localStorage.getItem('username')}`}/>
@@ -77,7 +77,8 @@ class Login extends Component {
                                                             <Field name="username" component={this.renderField} label="Username" type="text" />
                                                             <Field name="password" component={this.renderField} label="Password" type="password" />
                                                             <div className="text-center">
-                                                                <button className="btn btn-info" type="submit">Login</button>
+                                                                {submitting ? <button className="btn btn-info" disabled type="submit">Logging You In</button>
+                                                                : <button className="btn btn-info" type="submit">Login</button>}
                                                                 <p style={{ marginTop: '20px' }}><Link to="/forgotpassword">Forgot Password?</Link></p>
                                                                 {this.renderSignUpLink()}
                                                             </div>

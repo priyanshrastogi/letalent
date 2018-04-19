@@ -2,9 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Field, reduxForm } from 'redux-form';
 import { Link, Redirect } from 'react-router-dom';
-import { signUpUser } from '../actions';
+import { postJob } from '../actions';
 import NavBarDefault from './navbardefault';
-import background from '../img/login.jpg';
 
 class AddNewJob extends Component {
 
@@ -83,10 +82,8 @@ class AddNewJob extends Component {
     }
 
     onSubmit(values) {
-        values.username = values.username.toLowerCase();
-        values.email = values.email.toLowerCase();
         console.log(values);
-        this.props.signUpUser(values, () => this.props.history.push(`/@${values.username}`))
+        this.props.postJob(values, () => { return this.props.history });
     };
 
     render() {
@@ -167,4 +164,4 @@ function mapStateToProps(state) {
     return { errorMessage: state.auth.error, authenticated: state.auth.authenticated };
 }
 
-export default reduxForm({ validate: validate, form: 'AddNewJobForm' })(connect(mapStateToProps, { signUpUser })(AddNewJob));
+export default reduxForm({ validate: validate, form: 'AddNewJobForm' })(connect(mapStateToProps, {  })(AddNewJob));

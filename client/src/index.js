@@ -18,6 +18,7 @@ import JobDetails from './components/jobdetails';
 import AddNewJob from './components/addnewjob';
 import Page404 from './components/page404';
 import Dashboard from './components/dashboard';
+import JobAndProposalDetails from './components/dashboard/jobandproposalsdetail';
 import { LOGIN_USER } from './actions/types';
 
 const createStoreWithMiddleware = applyMiddleware(reduxThunk)(createStore);
@@ -40,6 +41,7 @@ ReactDOM.render(<Provider store={store}>
                     <Route exact path="/forgotpassword" component={ForgotPassword} />
                     <Route exact path="/@:username" component={UserProfile} />
                     <Route exact path="/dashboard" component={Dashboard} />
+                    <Route exact path="/dashboard/jobs/:jobId" component={JobAndProposalDetails} />
                     <Route exact path="/jobs" component={JobSearch} />
                     <Route exact path="/jobs/new" component={AddNewJob} />
                     <Route exact path="/jobs/:jobsId" component={JobDetails} />

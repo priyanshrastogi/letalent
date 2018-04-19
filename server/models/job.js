@@ -5,12 +5,11 @@ var jobAdditionalSchema = require('./jobAdditionalSchemas');
 var jobSchema = new Schema({
     title: String,
     description: String,
-    category: [String],
+    category: String,
     skillsReq: [String],
-    payType: String, //Hour based or Fixed pay namely 'Hourly' or 'Fixed'
-    fixedPayPrice: Number,
+    payType: {type: String, enum: ['hourly', 'fixed']}, //Hour based or Fixed pay namely 'Hourly' or 'Fixed'
     estimatedDuration: Number, //In hours
-    perHourPrice: Number,
+    budget: Number,
     postedBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
@@ -21,9 +20,8 @@ var jobSchema = new Schema({
     }],
     workingUser: {
         type: mongoose.Schema.Types.ObjectId,
-         ref: 'User'
+        ref: 'User'
     },
-    viewsNumber: {type: Number, default: 0},
     jobFinished: { type: Boolean, default: false },
     startedOn: Date,
     finishedOn: Date,
@@ -34,7 +32,6 @@ var jobSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Transaction'
     },
-    tag: {type: String, default: null},
     jobRatingByFreelancer: jobAdditionalSchema.ratingSchema,
 }, { timestamps: true });
 
