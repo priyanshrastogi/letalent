@@ -9,23 +9,22 @@ var projectSchema = new Schema({
     technologyUsed: [String],
     link: String,
     ongoing: Boolean
-}, { timestamps: true });
+});
 
 var workExperienceSchema = new Schema({
     company: String,
     designation: String,
-    statDate: Date,
-    endDate: Date,
+    statDate: String,
+    endDate: String,
     current: Boolean
-}, { timestamps: true });
+});
 
 var educationSchema = new Schema({
     school: String,
     gradYear: String,
     degree: String,
-    specialization: String,
     current: Boolean
-}, { timestamps: true });
+});
 
 exports.projectSchema = projectSchema;
 exports.workExperienceSchema = workExperienceSchema;

@@ -165,4 +165,114 @@ router.get('/:userId', (req, res, next) => {
     .catch((err) => next(err));
 })
 
+router.get('/:userId/education', (req, res, next) => {
+  UserProfile.findOne({user: req.params.userId})
+  .then((userprofile) => {
+    if (userprofile!= null) {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(userprofile.education);
+        }
+        else {
+            err = new Error('User not found');
+            err.status = 404;
+            return next(err);
+        }
+    }, (err) => next(err))
+    .catch((err) => next(err));
+})
+
+router.post('/:userId/education',(req, res, next) => {
+  UserProfile.findOne({user: req.params.userId} )
+  .then((userprofile) => {
+    if (userprofile!= null) {
+        console.log(req.body);
+        userprofile.education.push(req.body);
+        userprofile.save()
+        .then((userprofile) => {
+          res.send(userprofile);
+        })
+        }
+        else {
+            err = new Error('User not found');
+            err.status = 404;
+            return next(err);
+        }
+    }, (err) => next(err))
+    .catch((err) => next(err));
+});
+
+router.get('/:userId/projects', (req, res, next) => {
+  UserProfile.findOne({user: req.params.userId})
+  .then((userprofile) => {
+    if (userprofile!= null) {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(userprofile.projects);
+        }
+        else {
+            err = new Error('User not found');
+            err.status = 404;
+            return next(err);
+        }
+    }, (err) => next(err))
+    .catch((err) => next(err));
+})
+
+router.post('/:userId/projects',(req, res, next) => {
+  UserProfile.findOne({user: req.params.userId} )
+  .then((userprofile) => {
+    if (userprofile!= null) {
+        console.log(req.body);
+        userprofile.projects.push(req.body);
+        userprofile.save()
+        .then((userprofile) => {
+          res.send(userprofile);
+        })
+        }
+        else {
+            err = new Error('User not found');
+            err.status = 404;
+            return next(err);
+        }
+    }, (err) => next(err))
+    .catch((err) => next(err));
+});
+router.get('/:userId/workexperience', (req, res, next) => {
+  UserProfile.findOne({user: req.params.userId})
+  .then((userprofile) => {
+    if (userprofile!= null) {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(userprofile.workExperience);
+        }
+        else {
+            err = new Error('User not found');
+            err.status = 404;
+            return next(err);
+        }
+    }, (err) => next(err))
+    .catch((err) => next(err));
+})
+
+router.post('/:userId/workexperience',(req, res, next) => {
+  UserProfile.findOne({user: req.params.userId} )
+  .then((userprofile) => {
+    if (userprofile!= null) {
+        console.log(req.body);
+        userprofile.workExperience.push(req.body);
+        userprofile.save()
+        .then((userprofile) => {
+          res.send(userprofile);
+        })
+        }
+        else {
+            err = new Error('User not found');
+            err.status = 404;
+            return next(err);
+        }
+    }, (err) => next(err))
+    .catch((err) => next(err));
+});
+
 module.exports = router;
