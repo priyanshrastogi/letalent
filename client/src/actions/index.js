@@ -75,23 +75,6 @@ export function signUpUser(cred, callback) {
     }
 }
 
-export function fetchSelfUserProfile(id) {
-    return function(dispatch) {
-         axios.get(`${ROOT_URL}/users/${id}`)
-        .then((response) => {
-            dispatch({type: FETCH_SELFUSER_PROFILE, payload: response.data});
-        })
-        .catch((error) => {
-            if (error.response) {
-                showError('Some Error Occured!');
-            }
-            else if (error.request) {
-                showError('No Internet Connection');
-            }
-        })
-    }
-}
-
 export function fetchUserProfile(userId, callback) {
     return function(dispatch) {
         axios.get(`${ROOT_URL}/users/${userId}`)
@@ -109,7 +92,6 @@ export function fetchUserProfile(userId, callback) {
         });
     }
 }
-
 
 // Jobs Related Actions
 

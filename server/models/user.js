@@ -1,8 +1,8 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-var passportLocalMongoose = require('passport-local-mongoose');
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const bcrypt = require('bcrypt');
 
-var userSchema = new Schema({
+const userSchema = new Schema({
     name: {
         type: String,
         required: true
@@ -13,6 +13,16 @@ var userSchema = new Schema({
         required: true
     },
 
+    username: {
+        type: String,
+        required: true
+    },
+
+    password: {
+        type: String,
+        required: true,
+    },
+
     //userType: work or hire
     userType: {
         type: String,
@@ -21,6 +31,29 @@ var userSchema = new Schema({
 
 }, { timestamps: true });
 
-userSchema.plugin(passportLocalMongoose);
+userSchema.pre('save', function (next) {
+    const user = this;
+
+    if (!user.isModified('password')) { return next(); }
+    
+    bcrypt.genSalt(10, (err, salt) => {
+        if (err) { return next(err); }
+
+        bcrypt.hash(user.password, salt, (err, hash) => {
+            if (err) { return next(err); }
+
+            user.password = hash;
+            next();
+        });
+    });
+});
+
+userSchema.methods.comparePassword = function(candidatePassword, callback) {
+    bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
+        if (err) { return callback(err); }
+
+        callback(null, isMatch);
+    });
+};
 
 module.exports = mongoose.model('User', userSchema);

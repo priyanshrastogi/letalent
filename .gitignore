@@ -2,6 +2,9 @@
 server/node_modules
 client/node_modules
 
+#secrets
+server/config.js
+
 # testing
 client/coverage
 

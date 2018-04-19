@@ -1,14 +1,10 @@
 const express = require('express');
-
-
 const mongoose = require('mongoose');
 const Jobs = require('../models/job');
 const Proposals = require('../models/proposal');
-var authenticate = require('../authenticate');
-var mailer = require('../mailer');
+const authentication = require('../services/authentication');
+const mailer = require('../services/mailer');
 const jobRouter = express.Router();
-
-
 
 jobRouter.get('/',(req,res,next) => {
     Jobs.find({})
@@ -20,8 +16,8 @@ jobRouter.get('/',(req,res,next) => {
      .catch((err) => next(err));
 });
 
-jobRouter.post('/',authenticate.verifyUser,(req, res, next) => {
-    req.body.postedBy = req.user._id;//user's ID matches the id of the comment's author
+jobRouter.post('/', authentication.requireAuth, (req, res, next) => {
+    req.body.postedBy = req.user._id;
     Jobs.create(req.body)
     .then((job) => {
       res.statusCode = 200;
@@ -79,7 +75,7 @@ jobRouter.route('/:jobId/proposals')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.post(authenticate.verifyUser,(req, res, next) => {
+.post(authentication.requireAuth, (req, res, next) => {
     req.body.proposalUser = req.user._id;
     req.body.job = req.params.jobId;
     Proposals.create(req.body)
@@ -106,7 +102,7 @@ jobRouter.route('/:jobId/proposals')
     .catch((err) => next(err));
 });
 
-jobRouter.get('/:jobId/proposals/:proposalId',(req,res,next) => {
+jobRouter.get('/:jobId/proposals/:proposalId', (req,res,next) => {
     Proposals.find({job:req.params.jobId})
     .then((proposals) => {
         if (proposals!= null) {
@@ -134,30 +130,31 @@ jobRouter.get('/:jobId/proposals/:proposalId',(req,res,next) => {
     .catch((err) => next(err));
 });
 
-jobRouter.post('/:jobId/proposals/:proposalId/accept',authenticate.verifyUser,(req,res,next) => {
-    req.body.proposalUser = req.user._id//work wala
-    Proposals.findById(req.params.proposalId).populate('proposalUser','name email').populate({
+jobRouter.post('/:jobId/proposals/:proposalId/accept', authentication.requireAuth, (req,res,next) => {
+    Proposals.findById(req.params.proposalId).populate('proposalUser','email name').populate({
       path: 'job', model: 'Job', select:'postedBy', populate : {
         path: 'postedBy', model: 'User', select: 'name'
       }
     })
     .then((proposal) => {
-      if(proposal!=null){
-      proposal.status = "accepted";
-      proposal.save()
-      .then((proposal) => {
-      res.statusCode = 200;
-      res.setHeader('Content-Type', 'application/json');
-      res.json(proposal);
-      //send mail
-      mailer.sendAcceptMail(proposal);
-
-  },(err) => next(err));
-}
-else{
-  err = new Error('Proposal not found');
-  err.status = 404;
-  return next(err);
+        if(proposal!=null){
+            console.log(proposal.job.postedBy._id);
+            console.log(req.user._id);
+            console.log(proposal.job.postedBy._id.equals(req.user._id));
+            if(!proposal.job.postedBy._id.equals(req.user._id)) {
+                return res.status(401).send('Unauthorized');
+            }
+            proposal.status = "accepted";
+            proposal.save()
+            .then((proposal) => {
+                res.json(proposal);
+                mailer.sendAcceptMail(proposal);
+            },(err) => next(err));
+        }
+    else {
+        err = new Error('Proposal not found');
+        err.status = 404;
+        return next(err);
 }
 
 },(err) => next(err))

@@ -6,8 +6,8 @@ var User = require('../models/user');
 var UserProfile = require('../models/userProfile');
 var UserActivationToken = require('../models/userActivationToken');
 var ResetPasswordToken = require('../models/resetPasswordToken');
-var authenticate = require('../authenticate');
-var mailer = require('../mailer');
+var authentication = require('../services/authentication');
+var mailer = require('../services/mailer');
 var router = express.Router();
 
 /* GET users listing. */
@@ -22,48 +22,47 @@ router.get('/', (req, res, next) => {
 })
 
 router.post('/signup', (req,res,next) => {
-  User.register(new User({username: req.body.username, name: req.body.name, email: req.body.email, userType: req.body.userType}), req.body.password,
-  (err, user) => {
-    if(err) {
-      res.statusCode = 500;
-      res.setHeader('Content-Type', 'application/json');
-      res.json({err: err})
+  User.findOne({email: req.body.email})
+  .then((user) => {
+    if (user) {
+      return res.status(400).send({error: "EmailAlreadyExists"});
     }
-    else {
-      UserProfile.create({ user: user._id })
-      .then(
-        crypto.randomBytes(32, (err, buff) => {
-          const token = buff.toString('hex');
-          UserActivationToken.create({ token, user: user._id })
-          .then(
-            passport.authenticate('local')(req, res, () => {
-              var token = authenticate.getToken({ _id: req.user._id });
-              res.statusCode = 200;
-              res.setHeader('Content-Type', 'application/json');
-              res.json({ success: true, token: token, user: { _id: user._id, name: user.name, username: user.username, userType: user.userType , email:user.email}});
-
-              //Send Mail
-              if(user.userType == 'work'){
-                var link = `http://localhost:8000/users/activate/${token}`;
-                mailer.sendActivationMail(user.email,user.name,link);
-              }
-              else{
-                var link = `http://localhost:8000/users/activate/${token}`;
-                mailer.sendActivation2Mail(user.email,user.name,link);
-              }
-
-          }))
-        })
-      );
+    User.findOne({ username: req.body.username })
+    .then((user) => {
+    if (user) {
+      return res.status(400).send({ error: "UsernameAlreadyExists" });
     }
-  });
+    User.create(req.body)
+    .then((user) => {
+    UserProfile.create({ user: user._id, username: user.username })
+    .then(
+    crypto.randomBytes(32, (err, buff) => {
+      const token = buff.toString('hex');
+      UserActivationToken.create({ token, user: user._id })
+      .then(() => {
+      res.json({ success: true, token: authentication.getUserToken(user), user: { _id: user._id, name: user.name, username: user.username, userType: user.userType, email: user.email } });
+      if(user.userType == 'work'){
+        var link = `http://localhost:8000/users/activate/${token}`;
+        mailer.sendActivationMail(user.email,user.name,link);
+      }
+      else{
+        var link = `http://localhost:8000/users/activate/${token}`;
+        mailer.sendActivation2Mail(user.email,user.name,link);
+      }
+      }).catch((err) => { return next(err) });
+    })).catch((err) => { return next(err) });
+    }).catch((err) => { return next(err) });
+    }).catch((err) => { return next(err) });
+  }).catch((err) => { return next(err) });
 });
 
-router.post('/login', passport.authenticate('local'), (req, res, next) => {
-  var token = authenticate.getToken({_id: req.user._id});
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'application/json');
-  res.json({ success: true, token: token, user: { _id: req.user._id, name: req.user.name, username: req.user.username, userType: req.user.userType }});
+router.post('/login', (req, res, next) => {
+  passport.authenticate('local', { session: false }, (err, user, info) => {
+    if (err) { return next(err) }
+    if (!user) { return res.status(401).send(info); }
+    console.log(user);
+    res.json({ token: authentication.getUserToken(user), user: { _id: user._id, name: user.name, username: user.username, userType: user.userType }});
+  })(req, res, next);
 });
 
 router.get('/activate/:activationToken', (req, res, next) =>{
@@ -180,13 +179,15 @@ router.get('/:userId/education', (req, res, next) => {
         }
     }, (err) => next(err))
     .catch((err) => next(err));
-})
+});
 
-router.post('/:userId/education',(req, res, next) => {
-  UserProfile.findOne({user: req.params.userId} )
+router.post('/:userId/education', authentication.requireAuth, (req, res, next) => {
+  UserProfile.findOne({user: req.params.userId})
   .then((userprofile) => {
     if (userprofile!= null) {
-        console.log(req.body);
+        if(userprofile.user !== req.user._id) {
+          return res.send(401, 'Unauthorized');
+        }
         userprofile.education.push(req.body);
         userprofile.save()
         .then((userprofile) => {
@@ -217,13 +218,15 @@ router.get('/:userId/projects', (req, res, next) => {
         }
     }, (err) => next(err))
     .catch((err) => next(err));
-})
+});
 
-router.post('/:userId/projects',(req, res, next) => {
-  UserProfile.findOne({user: req.params.userId} )
+router.post('/:userId/projects', authentication.requireAuth, (req, res, next) => {
+  UserProfile.findOne({user: req.params.userId})
   .then((userprofile) => {
     if (userprofile!= null) {
-        console.log(req.body);
+        if(userprofile.user !== req.user._id) {
+          return res.send(401, 'Unauthorized');
+        }
         userprofile.projects.push(req.body);
         userprofile.save()
         .then((userprofile) => {
@@ -238,6 +241,7 @@ router.post('/:userId/projects',(req, res, next) => {
     }, (err) => next(err))
     .catch((err) => next(err));
 });
+
 router.get('/:userId/workexperience', (req, res, next) => {
   UserProfile.findOne({user: req.params.userId})
   .then((userprofile) => {
@@ -253,26 +257,28 @@ router.get('/:userId/workexperience', (req, res, next) => {
         }
     }, (err) => next(err))
     .catch((err) => next(err));
-})
+});
 
-router.post('/:userId/workexperience',(req, res, next) => {
+router.post('/:userId/workexperience', authentication.requireAuth, (req, res, next) => {
   UserProfile.findOne({user: req.params.userId} )
   .then((userprofile) => {
     if (userprofile!= null) {
-        console.log(req.body);
+        if(userprofile.user !== req.user._id) {
+          return res.send(401, 'Unauthorized');
+        }
         userprofile.workExperience.push(req.body);
         userprofile.save()
         .then((userprofile) => {
           res.send(userprofile);
         })
-        }
-        else {
-            err = new Error('User not found');
-            err.status = 404;
-            return next(err);
-        }
+    }
+    else {
+        err = new Error('User not found');
+        err.status = 404;
+        return next(err);
+    }
     }, (err) => next(err))
-    .catch((err) => next(err));
+  .catch((err) => next(err));
 });
 
 module.exports = router;

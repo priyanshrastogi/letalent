@@ -4,47 +4,29 @@ var userAdditionalSchemas = require('./userAdditionalSchemas');
 
 var userProfileSchema = new Schema({
 
-    user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-    },
-
-    phone: {
-        type: String,
-    },
-
-    location: [{
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User'},
+    
+    username: String,
+    
+    phone: String,
+    
+    location: {
         lat : Number,
         long: Number,
         locationName: String
-    }],
-
-    bio: {
-        type: String
     },
+    
+    bio: String,
+    
+    tagline: String,
 
-    tagline: {
-        type: String
-    },
+    dateOfBirth: Date,
 
-    dateOfBirth: {
-        type: Date
-    },
+    activatedAccount: { type: Boolean, default: false},
 
-    activatedAccount: {
-        type: Boolean,
-        default: false
-    },
+    verifiedAccount: { type: Boolean, default: false},
 
-    verifiedAccount: {
-        type: Boolean,
-        default: false,
-    },
-
-    perHourRate: {
-        type: Number,
-        default: 0
-    },
+    perHourRate: { type: Number, default: 0 },
 
     socialLinks: {
         facebook: String,
@@ -66,7 +48,6 @@ var userProfileSchema = new Schema({
         email: { type: Boolean, default: false },
         mobile: { type: Boolean, default:false },
         govtId: { type: Boolean, default:false },
-        paymentCard: { type: Boolean, default:false },
     },
 
     education: [userAdditionalSchemas.educationSchema],

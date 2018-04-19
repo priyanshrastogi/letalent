@@ -4,8 +4,7 @@ var Schema = mongoose.Schema;
 var projectSchema = new Schema({
     name: String,
     description: String,
-    startDate: Date,
-    endDate: Date,
+    duration: String,
     technologyUsed: [String],
     link: String,
     ongoing: Boolean
@@ -14,8 +13,7 @@ var projectSchema = new Schema({
 var workExperienceSchema = new Schema({
     company: String,
     designation: String,
-    statDate: String,
-    endDate: String,
+    duration: String,
     current: Boolean
 });
 
