@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const Jobs = require('../models/job');
 const Proposals = require('../models/proposal');
 var authenticate = require('../authenticate');
+var mailer = require('../mailer');
 const jobRouter = express.Router();
 
 
@@ -84,7 +85,7 @@ jobRouter.route('/:jobId/proposals')
     Proposals.create(req.body)
     .then((proposal) => {
         if (proposal != null) {
-             Jobs.findById(req.params.jobId)
+             Jobs.findById(req.params.jobId).populate('postedBy','name email')
              .then((job) => {
                 job.proposals.push(proposal);
                 job.save()
@@ -92,6 +93,7 @@ jobRouter.route('/:jobId/proposals')
                 res.statusCode = 200;
                 res.setHeader('Content-Type', 'application/json');
                 res.json(job);
+                mailer.sendProposalMail(job);
             },(err) => next(err));
         },(err) => next(err));
       }
@@ -133,8 +135,12 @@ jobRouter.get('/:jobId/proposals/:proposalId',(req,res,next) => {
 });
 
 jobRouter.post('/:jobId/proposals/:proposalId/accept',authenticate.verifyUser,(req,res,next) => {
-    req.body.proposalUser = req.user._id
-    Proposals.findById(req.params.proposalId)
+    req.body.proposalUser = req.user._id//work wala
+    Proposals.findById(req.params.proposalId).populate('proposalUser','name email').populate({
+      path: 'job', model: 'Job', select:'postedBy', populate : {
+        path: 'postedBy', model: 'User', select: 'name'
+      }
+    })
     .then((proposal) => {
       if(proposal!=null){
       proposal.status = "accepted";
@@ -143,6 +149,9 @@ jobRouter.post('/:jobId/proposals/:proposalId/accept',authenticate.verifyUser,(r
       res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');
       res.json(proposal);
+      //send mail
+      mailer.sendAcceptMail(proposal);
+
   },(err) => next(err));
 }
 else{
