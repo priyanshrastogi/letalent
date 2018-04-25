@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
 import { Field, reduxForm } from 'redux-form';
+import { addUserEducation } from '../../actions'
 
 class AddEducation extends Component {
 
@@ -23,6 +24,7 @@ class AddEducation extends Component {
     }
 
     onSubmit(values) {
+        this.props.addUserEducation(values, () => window.$('#addEducationModal').modal('hide'));
     };
 
 
@@ -64,15 +66,19 @@ class AddEducation extends Component {
 function validate(values) {
     const errors = {};
 
-    if (!values.username) {
-        errors.username = 'Username cannot be empty.';
+    if (!values.school) {
+        errors.school = 'Fill out this field.';
     }
 
-    if (!values.password) {
-        errors.password = 'Password cannot be empty.';
+    if (!values.degree) {
+        errors.degree = 'Fill out this field.';
+    }
+
+    if (!values.gradYear) {
+        errors.gradYear = 'Fill out this field.';
     }
 
     return errors
 }
 
-export default reduxForm({ validate, form: 'AddEducationForm' })(connect(null, null)(AddEducation));
+export default reduxForm({ validate, form: 'AddEducationForm' })(connect(null, { addUserEducation })(AddEducation));

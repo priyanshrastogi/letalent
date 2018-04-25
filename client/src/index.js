@@ -12,8 +12,8 @@ import Login from './components/login';
 import SignUp from './components/signup';
 import SignOut from './components/signout';
 import ForgotPassword from './components/forgotpassword';
-import UserProfile from './components/userprofile/privateprofile';
-import JobSearch from './components/jobssearch';
+import UserProfile from './components/userprofile';
+import JobSearch from './components/jobsearch';
 import JobDetails from './components/jobdetails';
 import AddNewJob from './components/addnewjob';
 import Page404 from './components/page404';
@@ -44,7 +44,7 @@ ReactDOM.render(<Provider store={store}>
                     <Route exact path="/dashboard/jobs/:jobId" component={JobAndProposalDetails} />
                     <Route exact path="/jobs" component={JobSearch} />
                     <Route exact path="/jobs/new" component={AddNewJob} />
-                    <Route exact path="/jobs/:jobsId" component={JobDetails} />
+                    <Route exact path="/jobs/:jobId" component={JobDetails} />
                     <Route component={Page404} />
                 </Switch>
                 <Footer />

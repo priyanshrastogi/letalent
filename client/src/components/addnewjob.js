@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Field, reduxForm } from 'redux-form';
 import { Link, Redirect } from 'react-router-dom';
+import { isNumeric } from 'validator';
 import { postJob } from '../actions';
 import NavBarDefault from './navbardefault';
 
@@ -104,11 +105,10 @@ class AddNewJob extends Component {
                                             <Field name="title" component={this.renderField} label="Job Title" placeholder="e.g. Build An e-Commerce Website" />
                                             <Field name="description" component={this.renderTextAreaField} label="Description" placeholder="Write about desired Features, Requirements, Specifications, Technologies etc." />
                                             <Field name="category" component={this.renderSelectField} label="Job Category"/>
-                                            <Field name="skillsReq" component={this.renderField} label="Skills Required" />
+                                            <Field name="skillsReq" component={this.renderField} label="Skills Required" placeholder="Write multiple skills seperated by comma"/>
                                             <Field name="payType" component={this.renderRadioField} />
-                                            <Field name="fixedPayPrice" component={this.renderField} label="Fixed Pay Price" placeholder="Job Price you are willing to pay in INR (Leave Blank if Hourly Pay Type)" />
-                                            <Field name="estimatedDuration" component={this.renderField} label="Estimated Duration" placeholder="Estimated Duration of Job In Hours (Leave Blank if Fixed Pay Type)" />
-                                            <Field name="perHourPrice" component={this.renderField} label="Per Hour Pay" placeholder="Price You are willing to pay per hour in INR (Leave Blank if Fixed Pay Type)" />
+                                            <Field name="estimatedDuration" component={this.renderField} label="Estimated Duration" placeholder="(Optional) In Days" />
+                                            <Field name="budget" component={this.renderField} label="Budget" placeholder="(Optional) In INR" />
                                             <div className="text-center">
                                                 <button className="btn btn-info" type="submit">Post Job</button>
                                             </div>
@@ -136,32 +136,27 @@ class AddNewJob extends Component {
 function validate(values) {
     const errors = {};
 
-    if (!values.name || values.name.trim().length <= 4) {
-        errors.name = 'Invalid Name';
+    if (!values.title || values.title.trim().length <= 8) {
+        errors.name = 'Please Insert a good title';
     }
 
-    if (!values.username || values.username.trim().length <= 3) {
-        errors.username = 'Username should be atleast 3 characters long';
+    if (!values.description || values.description.trim().length <= 40) {
+        errors.description = 'Description should be atleast 40 characters long.';
     }
 
-    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    if (!values.email || !re.test(values.email.toLowerCase())) {
-        errors.email = 'Invalid Email'
+    if (!values.budget || !isNumeric(values.budget)) {
+        errors.budget=  'Budget should be a number'
     }
 
-    if (!values.password || values.password.length < 8) {
-        errors.password = 'Password should be atleast 8 characters long';
-    }
-
-    if (!values.userType) {
-        errors.userType = 'Select a user type'
+    if (!values.estimatedDuration || !isNumeric(values.estimatedDuration)) {
+        errors.estimatedDuration = 'Estimated duration should be a number'
     }
 
     return errors
 }
 
 function mapStateToProps(state) {
-    return { errorMessage: state.auth.error, authenticated: state.auth.authenticated };
+    return { authenticated: state.auth.authenticated };
 }
 
-export default reduxForm({ validate: validate, form: 'AddNewJobForm' })(connect(mapStateToProps, {  })(AddNewJob));
+export default reduxForm({ validate: validate, form: 'AddNewJobForm' })(connect(mapStateToProps, { postJob })(AddNewJob));

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
 import { Field, reduxForm } from 'redux-form';
+import { updateUser } from '../../actions';
 
 class AddSkills extends Component {
 
@@ -14,7 +15,7 @@ class AddSkills extends Component {
                     <div class="input-group-prepend">
                         <span class="input-group-text">{field.label}</span>
                     </div>
-                    <input type="text" class="form-control" {...field.input} placeholder={field.placeholder} />
+                    <input type="text" class="tagsinput form-control" {...field.input} placeholder={field.placeholder} />
                 </div>
             </div>
             //If field is touched, only then show the error message.
@@ -22,6 +23,10 @@ class AddSkills extends Component {
     }
 
     onSubmit(values) {
+        let data = [];
+        data = values.skills.split(',');
+        data = this.props.userprofile.skills.concat(data);
+        this.props.updateUser({skills: data}, 'addSkillsModal', () => window.$('#addSkillsModal').modal('hide'))
     };
 
     render() {
@@ -42,7 +47,7 @@ class AddSkills extends Component {
                             <div className="modal-body">
                                 <div className="card-body">
                                     <form onSubmit={handleSubmit(this.onSubmit.bind(this))}>
-                                        <Field name="skill" component={this.renderField} label="SKill" placeholder="e.g. Node.js" />
+                                        <Field name="skills" component={this.renderField} label="Skill" placeholder="Write multiple skills seperated by comma" />
                                         <div className="text-center">
                                             <button className="btn btn-warning" type="submit">Save</button>
                                         </div>
@@ -71,4 +76,8 @@ function validate(values) {
     return errors
 }
 
-export default reduxForm({ validate, form: 'AddSkillsForm' })(connect(null, null)(AddSkills));
+function mapStateToProps(state) {
+    return { userprofile: state.userprofile };
+}
+
+export default reduxForm({ validate, form: 'AddSkillsForm' })(connect(mapStateToProps, { updateUser })(AddSkills));

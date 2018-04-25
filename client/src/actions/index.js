@@ -1,7 +1,8 @@
 import axios from 'axios';
-import { LOGIN_USER, LOGOUT_USER, AUTH_ERROR, POST_JOB, FETCH_JOBS, FETCH_USER_PROFILE, POST_PROPOSAL, FETCH_SELFUSER_PROFILE } from './types';
+import { reset } from 'redux-form';
+import { LOGIN_USER, LOGOUT_USER, AUTH_ERROR, POST_JOB, FETCH_JOBS, FETCH_JOB, FETCH_AND_APPEND_JOBS, FETCH_USER_PROFILE, POST_PROPOSAL, FETCH_SELFUSER_PROFILE, ADD_USER_EDUCATION, ADD_USER_EXPERIENCE, ADD_USER_PROJECT } from './types';
 
-const ROOT_URL = 'http://localhost:8000';
+const ROOT_URL = 'http://localhost';
 
 //User Related Actions
 
@@ -75,11 +76,94 @@ export function signUpUser(cred, callback) {
     }
 }
 
-export function fetchUserProfile(userId, callback) {
+export function fetchUserProfile(username) {
     return function(dispatch) {
-        axios.get(`${ROOT_URL}/users/${userId}`)
+        axios.get(`${ROOT_URL}/users/${username}`)
         .then((res) => {
             dispatch({type: FETCH_USER_PROFILE, payload: res.data});
+        })
+        .catch((error) => {    
+            if (error.response) {
+                showError('Some Error Occured!');
+            }
+            else if (error.request) {
+                showError('No Internet Connection');
+            }
+        });
+    }
+}
+
+export function addUserEducation(values, callback) {
+    return function(dispatch) {
+        axios.post(`${ROOT_URL}/users/education`, values, {
+            headers: { Authorization: `bearer ${localStorage.getItem('token')}` }
+        })
+        .then((res) => {
+            dispatch({type: FETCH_USER_PROFILE, payload: res.data});
+            dispatch(reset('AddEducationForm'));
+            callback();
+        })
+        .catch((error) => {    
+            if (error.response) {
+                showError('Some Error Occured!');
+            }
+            else if (error.request) {
+                showError('No Internet Connection');
+            }
+        });
+    }
+}
+
+export function addUserExperience(values, callback) {
+    return function(dispatch) {
+        axios.post(`${ROOT_URL}/users/workexperience`, values, {
+            headers: { Authorization: `bearer ${localStorage.getItem('token')}` }
+        })
+        .then((res) => {
+            dispatch({type: FETCH_USER_PROFILE, payload: res.data});
+            dispatch(reset('AddExperienceForm'));
+            callback();
+        })
+        .catch((error) => {    
+            if (error.response) {
+                showError('Some Error Occured!');
+            }
+            else if (error.request) {
+                showError('No Internet Connection');
+            }
+        });
+    }
+}
+
+export function addUserProject(values, callback) {
+    return function(dispatch) {
+        axios.post(`${ROOT_URL}/users/projects`, values, {
+            headers: { Authorization: `bearer ${localStorage.getItem('token')}` }
+        })
+        .then((res) => {
+            dispatch({type: FETCH_USER_PROFILE, payload: res.data});
+            dispatch(reset('AddProjectForm'));
+            callback();
+        })
+        .catch((error) => {    
+            if (error.response) {
+                showError('Some Error Occured!');
+            }
+            else if (error.request) {
+                showError('No Internet Connection');
+            }
+        });
+    }
+}
+
+export function updateUser(values, formName, callback) {
+    return function(dispatch) {
+        axios.put(`${ROOT_URL}/users`, values, {
+            headers: { Authorization: `bearer ${localStorage.getItem('token')}` }
+        })
+        .then((res) => {
+            dispatch({type: FETCH_USER_PROFILE, payload: res.data});
+            dispatch(reset(formName));
             callback();
         })
         .catch((error) => {    
@@ -101,8 +185,8 @@ export function postJob(values, callback) {
             headers: { Authorization: `bearer ${localStorage.getItem('token')}` }
         })
         .then((res) => {
-            dispatch({type: POST_JOB, payload: res.data});
-            callback();
+            callback(reset('AddNewJobForm'))
+            callback().push(`/jobs/${res.data._id}`);
         })
         .catch((error) => {    
             if (error.response) {
@@ -115,12 +199,28 @@ export function postJob(values, callback) {
     }
 }
 
-export function fetchJobs(keyword, callback) {
+export function fetchJobs(keyword) {
     return function(dispatch) {
         axios.get(`${ROOT_URL}/jobs`)
         .then((res) => {
-            dispatch({type: POST_JOB, payload: res.data});
-            callback();
+            dispatch({type: FETCH_JOBS, payload: res.data});
+        })
+        .catch((error) => {    
+            if (error.response) {
+                showError('Some Error Occured!');
+            }
+            else if (error.request) {
+                showError('No Internet Connection');
+            }
+        });
+    }
+}
+
+export function fetchJob(jobId) {
+    return function(dispatch) {
+        axios.get(`${ROOT_URL}/jobs/${jobId}`)
+        .then((res) => {
+            dispatch({type: FETCH_JOB, payload: res.data});
         })
         .catch((error) => {    
             if (error.response) {
