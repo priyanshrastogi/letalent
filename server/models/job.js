@@ -22,6 +22,8 @@ var jobSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
+    views: Number,
+    tag: { type: String, default: null },
     jobFinished: { type: Boolean, default: false },
     startedOn: Date,
     finishedOn: Date,
@@ -34,6 +36,11 @@ var jobSchema = new Schema({
     },
     jobRatingByFreelancer: jobAdditionalSchema.ratingSchema,
 }, { timestamps: true });
+
+jobSchema.methods.incrementViews = function() {
+    this.views = this.views + 1;
+    this.save();
+}
 
 var Jobs = mongoose.model('Job', jobSchema);
 module.exports = Jobs;

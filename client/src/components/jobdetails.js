@@ -3,13 +3,17 @@ import { connect } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
 import NavBarDefault from './navbardefault';
 import PostProposalModal from './postproposalmodal';
-import { fetchJob } from '../actions'
+import { fetchJob, incView } from '../actions'
 
 class JobDetails extends Component {
 
     componentDidMount() {
         if(!this.props.job) {
             this.props.fetchJob(this.props.match.params.jobId);
+        }
+        if(this.props.job) {
+            if(!this.props.viewedlist.includes(this.props.job._id))
+                this.props.incView(this.props.job._id);
         }
     }
 
@@ -81,7 +85,7 @@ class JobDetails extends Component {
 }
 
 function mapStateToProps(state, ownProps) {
-    return { authenticated: state.auth.authenticated, job: state.jobs[ownProps.match.params.jobId] };
+    return { authenticated: state.auth.authenticated, job: state.jobs[ownProps.match.params.jobId], viewedlist: state.viewedlist.list };
 }
 
-export default connect(mapStateToProps, { fetchJob })(JobDetails);
+export default connect(mapStateToProps, { fetchJob, incView })(JobDetails);

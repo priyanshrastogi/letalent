@@ -11,3 +11,4 @@ export const ADD_USER_EXPERIENCE = 'add_user_experience';
 export const ADD_USER_PROJECT = 'add_user_project';
 export const UPDATE_USER_PROFILE = 'update_user_profile';
 export const POST_PROPOSAL = 'post_proposal';
+export const ADD_TO_VIEWED_LIST = 'add_to_viewed_list';

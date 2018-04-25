@@ -58,6 +58,15 @@ jobRouter.route('/:jobId')
   .catch((err) => next(err));
 });
 
+jobRouter.route('/:jobId/incv')
+.post((req, res, next) => {
+    Jobs.findById(req.params.jobId)
+    .then(job => {
+        job.incrementViews();
+        res.sendStatus(200);
+    })
+})
+
 jobRouter.route('/:jobId/proposals')
 .get((req,res,next) => {
     Proposals.find({job: req.params.jobId})

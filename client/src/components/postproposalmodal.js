@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
 import { Field, reduxForm } from 'redux-form';
+import { postProposal } from '../actions';
 
 class PostProposalModal extends Component {
 
@@ -38,6 +39,7 @@ class PostProposalModal extends Component {
     }
 
     onSubmit(values) {
+        this.props.postProposal(this.props.jobId, values, () => window.$('#postProposalModal').modal('hide'));
     };
 
 
@@ -59,7 +61,7 @@ class PostProposalModal extends Component {
                             <div className="modal-body">
                                 <div className="card-body">
                                     <form onSubmit={handleSubmit(this.onSubmit.bind(this))}>
-                                        <Field name="proposaltext" component={this.renderTextAreaField} label="Your Proposal" placeholder="Atleast 50 Words" />
+                                        <Field name="proposaltext" component={this.renderTextAreaField} label="Your Proposal" placeholder="Alreast 50 words" />
                                         <Field name="price" component={this.renderField} label="Proposed Price" placeholder="In INR" />
                                         <Field name="time" component={this.renderField} label="Expected Complete Time" placeholder="In Days" />
                                         <div className="text-center">
@@ -79,15 +81,19 @@ class PostProposalModal extends Component {
 function validate(values) {
     const errors = {};
 
-    if (!values.username) {
-        errors.username = 'Username cannot be empty.';
+    if (!values.proposalText) {
+        errors.proposalText = 'Fill out this field';
     }
 
-    if (!values.password) {
-        errors.password = 'Password cannot be empty.';
+    if (!values.price) {
+        errors.price = 'Fill out this field';
+    }
+
+    if (!values.time) {
+        errors.time = 'Fill out this field';
     }
 
     return errors
 }
 
-export default reduxForm({ validate, form: 'PostProposalForm' })(connect(null, null)(PostProposalModal));
+export default reduxForm({ validate, form: 'PostProposalForm' })(connect(null, { postProposal })(PostProposalModal));

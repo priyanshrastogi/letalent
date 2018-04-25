@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { reset } from 'redux-form';
-import { LOGIN_USER, LOGOUT_USER, AUTH_ERROR, POST_JOB, FETCH_JOBS, FETCH_JOB, FETCH_AND_APPEND_JOBS, FETCH_USER_PROFILE, POST_PROPOSAL, FETCH_SELFUSER_PROFILE, ADD_USER_EDUCATION, ADD_USER_EXPERIENCE, ADD_USER_PROJECT } from './types';
+import { LOGIN_USER, LOGOUT_USER, AUTH_ERROR, POST_JOB, FETCH_JOBS, FETCH_JOB, FETCH_AND_APPEND_JOBS, FETCH_USER_PROFILE, POST_PROPOSAL, FETCH_SELFUSER_PROFILE, ADD_USER_EDUCATION, ADD_USER_EXPERIENCE, ADD_USER_PROJECT, ADD_TO_VIEWED_LIST } from './types';
 
 const ROOT_URL = 'http://localhost';
 
@@ -233,9 +233,9 @@ export function fetchJob(jobId) {
     }
 }
 
-export function postProposal(jobId) {
+export function postProposal(jobId, proposal) {
     return function(dispatch) {
-        axios.post(`${ROOT_URL}/jobs/${jobId}/proposals`, null, {
+        axios.post(`${ROOT_URL}/jobs/${jobId}/proposals`, proposal, {
             headers: { Authorization: `bearer ${localStorage.getItem('token')}` }
         })
         .then((res) => {
@@ -249,6 +249,15 @@ export function postProposal(jobId) {
                 showError('No Internet Connection');
             }
         });
+    }
+}
+
+export function incView(jobId) {
+    return function(dispatch) {
+        axios.post(`${ROOT_URL}/jobs/${jobId}/incv`)
+        .then((res) => {
+            dispatch({type: ADD_TO_VIEWED_LIST, payload: jobId});
+        })
     }
 }
 
