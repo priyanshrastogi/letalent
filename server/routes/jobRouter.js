@@ -7,7 +7,7 @@ const mailer = require('../services/mailer');
 const jobRouter = express.Router();
 
 jobRouter.get('/',(req,res,next) => {
-    Jobs.find({})
+    Jobs.find({}).sort({$natural:-1})
     .then((jobs) => {
       res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Field, reduxForm } from 'redux-form';
 import { Link, Redirect } from 'react-router-dom';
-import queryString from 'query-string';
+import queryString from 'qs';
 import { loginUser } from '../actions';
 import NavBarChange from './navbarchange';
 import background from '../img/login.jpg';

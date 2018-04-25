@@ -12,13 +12,21 @@ var router = express.Router();
 
 /* GET users listing. */
 router.get('/', (req, res, next) => {
-  User.find({})
+  UserProfile.find({}).populate('user','name email userType')
     .then((users) => {
       res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');
       res.json(users);
     }, (err) => next(err))
     .catch((err) => next(err));
+})
+
+router.put('/', authentication.requireAuth, (req, res, next) => {
+  UserProfile.findOneAndUpdate({user: req.user._id}, { $set: req.body }, { new: true }).populate('user','name email userType')
+  .then(user => {
+    res.json(user);
+  })
+  .catch(err => { return next(err) });
 })
 
 router.post('/signup', (req,res,next) => {
@@ -151,18 +159,8 @@ router.post('/resetpassword/:resetpasswordtoken',(req,res,next)=>{
   }})
 });
 
-router.get('/:userId', (req, res, next) => {
-  UserProfile.findById(req.params.userId).populate('user')
-  .then((user) => {
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'application/json');
-    res.json(user);
-    }, (err) => next(err))
-    .catch((err) => next(err));
-})
-
-router.get('/:userId/education', (req, res, next) => {
-  UserProfile.findOne({user: req.params.userId})
+router.get('/education', authentication.requireAuth, (req, res, next) => {
+  UserProfile.findOne({user: req.user._id})
   .then((userprofile) => {
     if (userprofile!= null) {
         res.statusCode = 200;
@@ -178,17 +176,18 @@ router.get('/:userId/education', (req, res, next) => {
     .catch((err) => next(err));
 });
 
-router.post('/:userId/education', authentication.requireAuth, (req, res, next) => {
-  UserProfile.findOne({user: req.params.userId})
+router.post('/education', authentication.requireAuth, (req, res, next) => {
+  UserProfile.findOne({user: req.user._id})
   .then((userprofile) => {
     if (userprofile!= null) {
-        if(userprofile.user !== req.user._id) {
-          return res.send(401, 'Unauthorized');
-        }
-        userprofile.education.push(req.body);
+        userprofile.education.unshift(req.body);
         userprofile.save()
         .then((userprofile) => {
-          res.send(userprofile);
+          User.findById(userprofile.user).select('name email userType')
+          .then(user => {
+            userprofile.user = user;
+            res.json(userprofile);
+          })
         })
         }
         else {
@@ -200,8 +199,8 @@ router.post('/:userId/education', authentication.requireAuth, (req, res, next) =
     .catch((err) => next(err));
 });
 
-router.get('/:userId/projects', (req, res, next) => {
-  UserProfile.findOne({user: req.params.userId})
+router.get('/projects', authentication.requireAuth, (req, res, next) => {
+  UserProfile.findOne({ user: req.user._id})
   .then((userprofile) => {
     if (userprofile!= null) {
         res.statusCode = 200;
@@ -217,17 +216,18 @@ router.get('/:userId/projects', (req, res, next) => {
     .catch((err) => next(err));
 });
 
-router.post('/:userId/projects', authentication.requireAuth, (req, res, next) => {
-  UserProfile.findOne({user: req.params.userId})
+router.post('/projects', authentication.requireAuth, (req, res, next) => {
+  UserProfile.findOne({ user: req.user._id})
   .then((userprofile) => {
     if (userprofile!= null) {
-        if(userprofile.user !== req.user._id) {
-          return res.send(401, 'Unauthorized');
-        }
-        userprofile.projects.push(req.body);
+        userprofile.projects.unshift(req.body);
         userprofile.save()
         .then((userprofile) => {
-          res.send(userprofile);
+          User.findById(userprofile.user).select('name email userType')
+          .then(user => {
+            userprofile.user = user;
+            res.json(userprofile);
+          })
         })
         }
         else {
@@ -239,8 +239,8 @@ router.post('/:userId/projects', authentication.requireAuth, (req, res, next) =>
     .catch((err) => next(err));
 });
 
-router.get('/:userId/workexperience', (req, res, next) => {
-  UserProfile.findOne({user: req.params.userId})
+router.get('/workexperience', authentication.requireAuth, (req, res, next) => {
+  UserProfile.findOne({user: req.user._id})
   .then((userprofile) => {
     if (userprofile!= null) {
         res.statusCode = 200;
@@ -256,17 +256,18 @@ router.get('/:userId/workexperience', (req, res, next) => {
     .catch((err) => next(err));
 });
 
-router.post('/:userId/workexperience', authentication.requireAuth, (req, res, next) => {
-  UserProfile.findOne({user: req.params.userId} )
+router.post('/workexperience', authentication.requireAuth, (req, res, next) => {
+  UserProfile.findOne({user: req.user._id} )
   .then((userprofile) => {
     if (userprofile!= null) {
-        if(userprofile.user !== req.user._id) {
-          return res.send(401, 'Unauthorized');
-        }
-        userprofile.workExperience.push(req.body);
+        userprofile.workExperience.unshift(req.body);
         userprofile.save()
         .then((userprofile) => {
-          res.send(userprofile);
+          User.findById(userprofile.user).select('name email userType')
+          .then(user => {
+            userprofile.user = user;
+            res.json(userprofile);
+          })
         })
     }
     else {
@@ -277,5 +278,15 @@ router.post('/:userId/workexperience', authentication.requireAuth, (req, res, ne
     }, (err) => next(err))
   .catch((err) => next(err));
 });
+
+router.get('/:username', (req, res, next) => {
+  UserProfile.findOne({username: req.params.username}).populate('user', 'name email userType')
+  .then((user) => {
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
+    res.json(user);
+    }, (err) => next(err))
+    .catch((err) => next(err));
+})
 
 module.exports = router;

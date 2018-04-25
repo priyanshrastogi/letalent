@@ -7,19 +7,34 @@
 var app = require('../app');
 var debug = require('debug')('letalent:server');
 var http = require('http');
+var https = require('https');
+var fs = require('fs');
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '8000');
+const port = normalizePort(process.env.PORT || '80');
+const securePort = normalizePort(process.env.SECUREPORT || '443');
 app.set('port', port);
+app.set('securePort', securePort);
 
 /**
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
+const server = http.createServer(app);
+
+/**
+ * Create HTTPS server
+ */
+
+const options = {
+  cert: fs.readFileSync('./sslcert/fullchain.pem'),
+  key: fs.readFileSync('./sslcert/privkey.pem')
+};
+
+const secureServer = https.createServer(options, app)
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -28,6 +43,10 @@ var server = http.createServer(app);
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
+
+secureServer.listen(securePort);
+secureServer.on('error', onError);
+secureServer.on('listening', onListening);
 
 /**
  * Normalize a port into a number, string, or false.
