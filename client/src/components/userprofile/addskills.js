@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
 import { Field, reduxForm } from 'redux-form';
-import { updateUser } from '../../actions';
+import { updateUserProfile } from '../../actions';
 
 class AddSkills extends Component {
 
@@ -24,9 +24,9 @@ class AddSkills extends Component {
 
     onSubmit(values) {
         let data = [];
-        data = values.skills.split(',');
+        data = values.skills.split(',').map(element => element.trim(' '));
         data = this.props.userprofile.skills.concat(data);
-        this.props.updateUser({skills: data}, 'addSkillsModal', () => window.$('#addSkillsModal').modal('hide'))
+        this.props.updateUserProfile({skills: data}, 'addSkillsModal', () => window.$('#addSkillsModal').modal('hide'))
     };
 
     render() {
@@ -80,4 +80,4 @@ function mapStateToProps(state) {
     return { userprofile: state.userprofile };
 }
 
-export default reduxForm({ validate, form: 'AddSkillsForm' })(connect(mapStateToProps, { updateUser })(AddSkills));
+export default reduxForm({ validate, form: 'AddSkillsForm' })(connect(mapStateToProps, { updateUserProfile })(AddSkills));

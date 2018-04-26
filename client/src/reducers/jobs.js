@@ -1,4 +1,4 @@
-import { FETCH_JOBS, FETCH_AND_APPEND_JOBS, FETCH_JOB } from '../actions/types';
+import { FETCH_JOBS, FETCH_AND_APPEND_JOBS, FETCH_JOB, POST_PROPOSAL } from '../actions/types';
 import _ from 'lodash';
 
 export default function(state = {}, action) {
@@ -12,6 +12,11 @@ export default function(state = {}, action) {
 
         case FETCH_JOB:
             return { ...state, [action.payload._id]: action.payload}
+
+        case POST_PROPOSAL:
+            state[action.payload._id] = action.payload;
+            //console.log(state[action.payload._id]);
+            return state;
 
         default:
             return state;

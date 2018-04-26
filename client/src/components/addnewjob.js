@@ -51,6 +51,15 @@ class AddNewJob extends Component {
                     <select class="form-control" {...field.input}>
                         <option disable>Please Select</option>
                         <option>Web Development</option>
+                        <option>Mobile Development</option>
+                        <option>Software Development</option>
+                        <option>Data Science</option>
+                        <option>Artificial Intelligence</option>
+                        <option>Grpahics Design</option>
+                        <option>Animation and Movie Making</option>
+                        <option>Content Writing</option>
+                        <option>Software Testing</option>
+                        <option>DJ and Music Design</option>
                     </select>
                 </div>
             </div>
@@ -84,6 +93,7 @@ class AddNewJob extends Component {
 
     onSubmit(values) {
         console.log(values);
+        values.skillsReq = values.skillsReq.split(',').map(element => element.trim(' '));
         this.props.postJob(values, () => { return this.props.history });
     };
 
@@ -95,29 +105,24 @@ class AddNewJob extends Component {
             return (
                 <div>
                     <NavBarDefault />
-                    <div className="container">
-                        <div className="row" style={{ marginTop: '70px'}}>
-                            <div className="col-md-8" style={{ backgroundColor: 'white', paddingTop: '50px'}}>
-                                <div class="card card-nav-tabs">
-                                    <h3 class="card-header card-header-info text-center">Add New Job</h3>
-                                    <div class="card-body">
-                                        <form onSubmit={handleSubmit(this.onSubmit.bind(this))}>
-                                            <Field name="title" component={this.renderField} label="Job Title" placeholder="e.g. Build An e-Commerce Website" />
-                                            <Field name="description" component={this.renderTextAreaField} label="Description" placeholder="Write about desired Features, Requirements, Specifications, Technologies etc." />
-                                            <Field name="category" component={this.renderSelectField} label="Job Category"/>
-                                            <Field name="skillsReq" component={this.renderField} label="Skills Required" placeholder="Write multiple skills seperated by comma"/>
-                                            <Field name="payType" component={this.renderRadioField} />
-                                            <Field name="estimatedDuration" component={this.renderField} label="Estimated Duration" placeholder="(Optional) In Days" />
-                                            <Field name="budget" component={this.renderField} label="Budget" placeholder="(Optional) In INR" />
-                                            <div className="text-center">
-                                                <button className="btn btn-info" type="submit">Post Job</button>
-                                            </div>
-                                        </form>
-                                    </div>
+                    <div className="card">
+                        <div className="card-body">
+                            <div className="row" style={{ marginTop: '70px'}}>
+                                <div className="col-md-8 offset-md-2 text-center" style={{ backgroundColor: 'white'}}>
+                                    <h3 className="title">Add New Job</h3>
+                                    <form onSubmit={handleSubmit(this.onSubmit.bind(this))}>
+                                        <Field name="title" component={this.renderField} label="Job Title" placeholder="e.g. Build An e-Commerce Website" />
+                                        <Field name="description" component={this.renderTextAreaField} label="Description" placeholder="Write about desired Features, Requirements, Specifications, Technologies etc." />
+                                        <Field name="category" component={this.renderSelectField} label="Job Category"/>
+                                        <Field name="skillsReq" component={this.renderField} label="Skills Required" placeholder="Write multiple skills seperated by comma"/>
+                                        <Field name="payType" component={this.renderRadioField} />
+                                        <Field name="estimatedDuration" component={this.renderField} label="Estimated Duration" placeholder="(Optional) In Days" />
+                                        <Field name="budget" component={this.renderField} label="Budget" placeholder="(Optional) In INR" />
+                                        <div className="text-center">
+                                            <button className="btn btn-info" type="submit">Post Job</button>
+                                        </div>
+                                    </form>
                                 </div>
-                            </div>
-                            <div className="col-md-4 text-center" style={{ backgroundColor: 'white', paddingTop: '50px' }}>
-                                <h4>Top Freelancers</h4>
                             </div>
                         </div>
                     </div>
@@ -144,11 +149,11 @@ function validate(values) {
         errors.description = 'Description should be atleast 40 characters long.';
     }
 
-    if (!values.budget || !isNumeric(values.budget)) {
+    if (values.budget && !isNumeric(values.budget)) {
         errors.budget=  'Budget should be a number'
     }
 
-    if (!values.estimatedDuration || !isNumeric(values.estimatedDuration)) {
+    if (values.estimatedDuration && !isNumeric(values.estimatedDuration)) {
         errors.estimatedDuration = 'Estimated duration should be a number'
     }
 

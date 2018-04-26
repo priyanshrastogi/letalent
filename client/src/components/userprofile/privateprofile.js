@@ -71,6 +71,29 @@ class PrivateProfile extends Component {
         )
     }
 
+    renderSocialLinks() {
+        const {userprofile} = this.props;
+        if(userprofile.socialLinks) {
+            return(
+                <div>
+                    {userprofile.socialLinks.twitter ? <a href={`https://twitter.com/${userprofile.socialLinks.twitter}`} className="btn btn-just-icon btn-link"><i className="fa fa-twitter"></i></a> : ''}
+                    {userprofile.socialLinks.facebook ? <a href={`https://facebook.com/${userprofile.socialLinks.facebook}`} className="btn btn-just-icon btn-link"><i className="fa fa-facebook"></i></a> : ''}
+                    {userprofile.socialLinks.github ? <a href={`https://github.com/${userprofile.socialLinks.github}`} className="btn btn-just-icon btn-link"><i className="fa fa-github"></i></a> : ''}
+                    {userprofile.socialLinks.linkedin ? <a href={`https://linkedin.com/in/${userprofile.socialLinks.linkedin}`} className="btn btn-just-icon btn-link"><i className="fa fa-linkedin"></i></a> : ''}
+                    {userprofile.socialLinks.medium ? <a href={`https://medium.com/@${userprofile.socialLinks.medium}`} className="btn btn-just-icon btn-link"><i className="fa fa-medium"></i></a> : ''}
+                    {userprofile.socialLinks.behance ? <a href={`https://behance.net/${userprofile.socialLinks.behance}`} className="btn btn-just-icon btn-link"><i className="fa fa-behance"></i></a> : ''}
+                    {userprofile.socialLinks.pinterest ? <a href={`https://pinterest.com/${userprofile.socialLinks.pinterest}`} className="btn btn-just-icon btn-link"><i className="fa fa-pinterest"></i></a> : ''}
+                    {userprofile.socialLinks.codepen ? <a href={`https://codepen.io/${userprofile.socialLinks.codepen}`} className="btn btn-just-icon btn-link"><i className="fa fa-codepen"></i></a> : ''}
+                </div>
+            );
+        }
+        else {
+            return(
+                <div></div>
+            );
+        } 
+    }
+
     render() {
 
         const { userprofile } = this.props;
@@ -84,7 +107,7 @@ class PrivateProfile extends Component {
                         <div className="profile-content">
                             <div className="container">
                                 <div className="row">
-                                    <button className="btn btn-link d-none d-sm-block" data-toggle="modal" data-target="#editProfileModal" style={{ position: 'absolute', top: '8px', right: '16px' }}><i className="fa fa-edit"></i> <strong>Edit Profile</strong></button>
+                                    <button className="btn btn-link d-none d-sm-block" data-toggle="modal" data-target="#editProfileModal" style={{ position: 'absolute', top: '8px', right: '16px' }}><i className="fa fa-edit"></i><strong>Edit Profile</strong></button>
                                     <a className="btn btn-link btn-just-icon d-sm-none" style={{ position: 'absolute', top: '8px', right: '16px' }}><i className="fa fa-edit"></i></a>
                                     <div className="col-md-6 ml-auto mr-auto">
                                         <div className="profile">
@@ -94,9 +117,7 @@ class PrivateProfile extends Component {
                                             <div className="name">
                                                 <h3 className="title">{userprofile.user.name}</h3>
                                                 <h6>{userprofile.tagline}</h6>
-                                                {/*<a href={} className="btn btn-just-icon btn-link"><i className="fa fa-twitter"></i></a>
-                                                <a href="#pablo" className="btn btn-just-icon btn-link"><i className="fa fa-github"></i></a>
-        <a href="#pablo" className="btn btn-just-icon btn-link"><i className="fa fa-linkedin"></i></a>*/}
+                                                {this.renderSocialLinks()}
                                             </div>
                                         </div>
                                     </div>

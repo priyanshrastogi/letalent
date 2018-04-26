@@ -1,58 +1,67 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
-import NavBarDefault from '../navbardefault';
 import PostProposalModal from '../postproposalmodal';
+import { incView } from '../../actions';
 
-class JobAndProposalDetails extends Component {
+class JobDetailsPublic extends Component {
+
+    componentDidMount() {
+        if (this.props.job) {
+            if (!this.props.viewedlist.includes(this.props.job._id))
+                this.props.incView(this.props.job._id);
+        }
+    }
 
     render() {
+
+        const { job } = this.props;
+
         return (
             <div>
-                <NavBarDefault />
                 <div className="card">
                     <div className="card-body">
                         <div className="row">
                             <div className="col-md-8 offset-md-2" style={{ marginTop: '50px' }}>
-                                <h3 className="text-center title">Build A Personal Website</h3>
+                                <h3 className="text-center title">{job.title}</h3>
                             </div>
                         </div>
                         <div className="container">
                             <div style={{ marginBottom: '30px' }}>
                                 <h4 className="title">Description</h4>
-                                <p style={{ fontWeight: 400 }}>Hello There, Just Build My Website. It should have something like a good looking website. It should be dynamic and it should be really well. It should work. You should use React, Node and whatever the fuck you want but it just should work motherfuckers.</p>
+                                <p style={{ fontWeight: 400 }}>{job.description}</p>
                             </div>
                             <div style={{ marginBottom: '30px' }}>
                                 <h4 className="title">Skills Required</h4>
-                                <p style={{ fontWeight: 400 }}>Node.js, React, Redux, Web Development, Payment Integration</p>
+                                <p style={{ fontWeight: 400 }}>{job.skillsReq.join(", ")}</p>
                             </div>
                             <div style={{ marginBottom: '30px' }}>
                                 <h4 className="title">Pay Type</h4>
-                                <p style={{ fontWeight: 400 }}>Fixed Price</p>
+                                <p style={{ fontWeight: 400 }}>{job.payType === 'fixed' ? "Fixed Pay" : "Hourly Pay"}</p>
                             </div>
                             <div style={{ marginBottom: '30px' }}>
                                 <h4 className="title">Budget</h4>
-                                <p style={{ fontWeight: 400 }}>INR 10,000 - 20,000</p>
+                                <p style={{ fontWeight: 400 }}>{`Upto INR ${job.budget}`}</p>
                             </div>
                             <div>
                                 <span className="text-danger" style={{ fontWeight: 400 }}>
-                                    <i className="material-icons">local_offer</i> 5 Proposals, Avg. Proposal Price is INR 12,000
+                                    <i className="material-icons">local_offer</i> {`${job.proposals.length} Proposals`}
                                 </span>
                             </div>
                             <div className="text-center">
                                 <button className="btn btn-info" data-toggle="modal" data-target="#postProposalModal">Post A Proposal</button>
                             </div>
-                            <PostProposalModal />
+                            <PostProposalModal jobId={job._id} />
                         </div>
                     </div>
                 </div>
             </div>
-        );
+        )
     }
 }
 
-function mapStateToProps(state) {
-    return { errorMessage: state.auth.error, authenticated: state.auth.authenticated };
+function mapStateToProps(state, ownProps) {
+    return { viewedlist: state.viewedlist.list };
 }
 
-export default connect(mapStateToProps, null)(JobAndProposalDetails);
+export default connect(mapStateToProps, { incView })(JobDetailsPublic);

@@ -4,13 +4,19 @@ import authReducer from './auth'
 import userProfileReducer from './userprofile';
 import jobsReducer from './jobs';
 import viewedListReducer from './viewedlist';
+import jobsPostedReducer from './jobsposted';
+import jobsWorkingReducer from './jobsworking';
+import proposalsReducer from './proposals';
 
 const rootReducer = combineReducers({
     form: formReducer,
     auth: authReducer,
     userprofile: userProfileReducer,
     jobs: jobsReducer,
-    viewedlist: viewedListReducer
+    viewedlist: viewedListReducer,
+    jobsposted: jobsPostedReducer,
+    jobsworking: jobsWorkingReducer,
+    proposals: proposalsReducer
 });
 
 export default rootReducer;

@@ -35,13 +35,10 @@ var userProfileSchema = new Schema({
         github: String,
         behance: String,
         pinterest: String,
-        instagram: String,
         blog: String,
         website: String,
-        other: [{
-            platform: String,
-            url: String
-        }]
+        medium: String,
+        codepen: String
     },
 
     verifications: {

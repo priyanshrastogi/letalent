@@ -61,9 +61,9 @@ class PostProposalModal extends Component {
                             <div className="modal-body">
                                 <div className="card-body">
                                     <form onSubmit={handleSubmit(this.onSubmit.bind(this))}>
-                                        <Field name="proposaltext" component={this.renderTextAreaField} label="Your Proposal" placeholder="Alreast 50 words" />
-                                        <Field name="price" component={this.renderField} label="Proposed Price" placeholder="In INR" />
-                                        <Field name="time" component={this.renderField} label="Expected Complete Time" placeholder="In Days" />
+                                        <Field name="proposal" component={this.renderTextAreaField} label="Your Proposal" placeholder="Alreast 50 words" />
+                                        <Field name="proposedPrice" component={this.renderField} label="Proposed Price" placeholder="In INR" />
+                                        <Field name="daysToComplete" component={this.renderField} label="Expected Complete Time" placeholder="In Days" />
                                         <div className="text-center">
                                             <button className="btn btn-info" type="submit">Send</button>
                                         </div>
@@ -81,16 +81,16 @@ class PostProposalModal extends Component {
 function validate(values) {
     const errors = {};
 
-    if (!values.proposalText) {
-        errors.proposalText = 'Fill out this field';
+    if (!values.proposal) {
+        errors.proposal = 'Fill out this field';
     }
 
-    if (!values.price) {
-        errors.price = 'Fill out this field';
+    if (!values.proposedPrice) {
+        errors.proposedPrice = 'Fill out this field';
     }
 
-    if (!values.time) {
-        errors.time = 'Fill out this field';
+    if (!values.daysToComplete) {
+        errors.daysToComplete = 'Fill out this field';
     }
 
     return errors

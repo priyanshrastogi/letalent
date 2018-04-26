@@ -7,7 +7,7 @@ const mailer = require('../services/mailer');
 const jobRouter = express.Router();
 
 jobRouter.get('/',(req,res,next) => {
-    Jobs.find({}).sort({$natural:-1})
+    Jobs.find(req.query).sort({$natural:-1})
     .then((jobs) => {
       res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');
@@ -69,7 +69,7 @@ jobRouter.route('/:jobId/incv')
 
 jobRouter.route('/:jobId/proposals')
 .get((req,res,next) => {
-    Proposals.find({job: req.params.jobId})
+    Proposals.find({job: req.params.jobId}).populate('proposalUser', 'name username')
     .then((proposals) => {
         if (proposals!= null) {
             res.statusCode = 200;
@@ -147,11 +147,14 @@ jobRouter.post('/:jobId/proposals/:proposalId/accept', authentication.requireAut
     })
     .then((proposal) => {
         if(proposal!=null){
-            console.log(proposal.job.postedBy._id);
-            console.log(req.user._id);
-            console.log(proposal.job.postedBy._id.equals(req.user._id));
+            //console.log(proposal.job.postedBy._id);
+            //console.log(req.user._id);
+            //console.log(proposal.job.postedBy._id.equals(req.user._id));
             if(!proposal.job.postedBy._id.equals(req.user._id)) {
                 return res.status(401).send('Unauthorized');
+            }
+            if(proposal.status === 'accepted') {
+                return res.status(400).send('AlreadyAccepted');
             }
             proposal.status = "accepted";
             proposal.save()

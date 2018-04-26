@@ -5,11 +5,12 @@ import _ from 'lodash';
 import NavBarDefault from './navbardefault';
 import JobSearchBar from './jobsearchbar';
 import { fetchJobs } from '../actions';
+import { FETCH_JOBS } from '../actions/types';
 
 class JobIndex extends Component {
 
     componentDidMount() {
-        this.props.fetchJobs();
+        this.props.fetchJobs({}, FETCH_JOBS);
     }
 
     renderJobList() {

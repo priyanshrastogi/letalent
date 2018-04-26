@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { reset } from 'redux-form';
-import { LOGIN_USER, LOGOUT_USER, AUTH_ERROR, POST_JOB, FETCH_JOBS, FETCH_JOB, FETCH_AND_APPEND_JOBS, FETCH_USER_PROFILE, POST_PROPOSAL, FETCH_SELFUSER_PROFILE, ADD_USER_EDUCATION, ADD_USER_EXPERIENCE, ADD_USER_PROJECT, ADD_TO_VIEWED_LIST } from './types';
+import qs from 'qs';
+import { LOGIN_USER, LOGOUT_USER, AUTH_ERROR, POST_JOB, FETCH_JOBS, FETCH_JOB, FETCH_AND_APPEND_JOBS, FETCH_USER_PROFILE, POST_PROPOSAL, FETCH_PROPOSALS, ADD_USER_EDUCATION, ADD_USER_EXPERIENCE, ADD_USER_PROJECT, ADD_TO_VIEWED_LIST } from './types';
 
 const ROOT_URL = 'http://localhost';
 
@@ -156,7 +157,7 @@ export function addUserProject(values, callback) {
     }
 }
 
-export function updateUser(values, formName, callback) {
+export function updateUserProfile(values, formName, callback) {
     return function(dispatch) {
         axios.put(`${ROOT_URL}/users`, values, {
             headers: { Authorization: `bearer ${localStorage.getItem('token')}` }
@@ -199,11 +200,11 @@ export function postJob(values, callback) {
     }
 }
 
-export function fetchJobs(keyword) {
+export function fetchJobs(query, actionType) {
     return function(dispatch) {
-        axios.get(`${ROOT_URL}/jobs`)
+        axios.get(`${ROOT_URL}/jobs?${qs.stringify(query)}`)
         .then((res) => {
-            dispatch({type: FETCH_JOBS, payload: res.data});
+            dispatch({type: actionType, payload: res.data});
         })
         .catch((error) => {    
             if (error.response) {
@@ -233,17 +234,55 @@ export function fetchJob(jobId) {
     }
 }
 
-export function postProposal(jobId, proposal) {
+export function postProposal(jobId, proposal, callback) {
     return function(dispatch) {
         axios.post(`${ROOT_URL}/jobs/${jobId}/proposals`, proposal, {
             headers: { Authorization: `bearer ${localStorage.getItem('token')}` }
         })
         .then((res) => {
             dispatch({ type: POST_PROPOSAL, payload: res.data });
+            callback();
         })
         .catch((error) => {    
             if (error.response) {
                 showError('Some Error Occured!');
+            }
+            else if (error.request) {
+                showError('No Internet Connection');
+            }
+        });
+    }
+}
+
+export function fetchProposals(jobId) {
+    return function(dispatch) {
+        axios.get(`${ROOT_URL}/jobs/${jobId}/proposals`)
+        .then((res) => {
+            dispatch({ type: FETCH_PROPOSALS, payload: res.data });
+        })
+        .catch((error) => {    
+            if (error.response) {
+                showError('Some Error Occured!');
+            }
+            else if (error.request) {
+                showError('No Internet Connection');
+            }
+        });
+    }
+}
+
+export function acceptProposal(jobId, proposalId, callback) {
+    return function(dispatch) {
+        axios.post(`${ROOT_URL}/jobs/${jobId}/proposals/${proposalId}/accept`, null, {
+            headers: { Authorization: `bearer ${localStorage.getItem('token')}`}
+        })
+        .then((res) => {
+            callback();
+        })
+        .catch((error) => {    
+            if (error.response) {
+                showError('Some Error Occured!');
+                callback();
             }
             else if (error.request) {
                 showError('No Internet Connection');

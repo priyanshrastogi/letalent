@@ -22,7 +22,7 @@ var jobSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
-    views: Number,
+    views: {type: Number, default: 1},
     tag: { type: String, default: null },
     jobFinished: { type: Boolean, default: false },
     startedOn: Date,
