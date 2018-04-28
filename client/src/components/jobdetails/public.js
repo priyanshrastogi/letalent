@@ -51,7 +51,7 @@ class JobDetailsPublic extends Component {
                             <div className="text-center">
                                 <button className="btn btn-info" data-toggle="modal" data-target="#postProposalModal">Post A Proposal</button>
                             </div>
-                            <PostProposalModal jobId={job._id} />
+                            <PostProposalModal jobId={job._id} history={this.props.history}/>
                         </div>
                     </div>
                 </div>

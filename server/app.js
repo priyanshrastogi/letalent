@@ -8,6 +8,7 @@ var index = require('./routes/index');
 var users = require('./routes/users');
 var jobs = require('./routes/jobRouter');
 var skills = require('./routes/skillRouter');
+var api = require('./routes/api');
 var mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
 var passport = require('passport');
@@ -43,6 +44,7 @@ app.use('/', index);
 app.use('/users', users);
 app.use('/jobs', jobs);
 app.use('/skills', skills);
+app.use('/api', api);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');

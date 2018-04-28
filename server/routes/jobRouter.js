@@ -1,17 +1,19 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const Jobs = require('../models/job');
+const Submissions = require('../models/jobsubmissions');
 const Proposals = require('../models/proposal');
+const JobProgress = require('../models/jobprogress');
 const authentication = require('../services/authentication');
 const mailer = require('../services/mailer');
 const jobRouter = express.Router();
 
 jobRouter.get('/',(req,res,next) => {
-    Jobs.find(req.query).sort({$natural:-1})
+    Jobs.find(req.query).sort({$natural:-1}).populate('workingUser','name username').populate('postedBy','name username email')
     .then((jobs) => {
       res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');
-      res.json(jobs)
+      res.json(jobs);
     },(err) => next(err))
      .catch((err) => next(err));
 });
@@ -22,14 +24,14 @@ jobRouter.post('/', authentication.requireAuth, (req, res, next) => {
     .then((job) => {
       res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');
-      res.json(job)
+      res.json(job);
     },(err) => next(err))
     .catch((err) => next(err));
 });
 
 jobRouter.route('/:jobId')
 .get((req,res,next)  => {
-  Jobs.findById(req.params.jobId)
+  Jobs.findById(req.params.jobId).populate('workingUser','name username').populate('postedBy','name username email')
   .then((job) => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
@@ -64,6 +66,54 @@ jobRouter.route('/:jobId/incv')
     .then(job => {
         job.incrementViews();
         res.sendStatus(200);
+    });
+})
+
+jobRouter.route('/:jobId/submit')
+.post(authentication.requireAuth, (req, res, next) => {
+    Jobs.findById(req.params.jobId)
+    .then(job => {
+        if(job !== null) {
+            Submissions.create({job: req.params.jobId, submittedBy: req.user._id, sourceUrl: req.body.sourceUrl, reviewUrl: req.body.reviewUrl, message: req.body.message})
+            .then(submission => {
+                job.status = 'submitted';
+                job.save()
+                .then(job => {
+                    res.status(200).json({success:true, submissionId: submission._id});
+                })
+            })
+            .catch(err => { return next(err)});
+        }
+    })
+});
+
+jobRouter.route('/:jobId/submissions')
+.get((req, res, next) => {
+    Submissions.find({job: req.params.jobId}).sort({$natural:-1})
+    .then(submissions => {
+        res.status(200).json(submissions);
+    })
+    .catch(err=> { return next(err)})
+})
+
+jobRouter.route('/:jobId/progress')
+.get((req, res, next) => {
+    JobProgress.find({job: req.params.jobId}).sort({$natural: -1})
+    .then(progress => {
+        res.status(200).json(progress);
+    })
+    .catch(err => {return next(err)})
+})
+.post(authentication.requireAuth, (req, res, next) => {
+    Jobs.findById(req.params.jobId)
+    .then(job => {
+        if(job !== null) {
+            JobProgress.create({job: req.params.job, submittedBy: req.user._id, message})
+            .then(progress => {
+                res.status(200).json(progress);
+            })
+            .catch(err => { return next(err)})
+        }
     })
 })
 
@@ -90,7 +140,7 @@ jobRouter.route('/:jobId/proposals')
     Proposals.create(req.body)
     .then((proposal) => {
         if (proposal != null) {
-             Jobs.findById(req.params.jobId).populate('postedBy','name email')
+             Jobs.findById(req.params.jobId).populate('postedBy','name email username')
              .then((job) => {
                 job.proposals.push(proposal);
                 job.save()
@@ -156,11 +206,20 @@ jobRouter.post('/:jobId/proposals/:proposalId/accept', authentication.requireAut
             if(proposal.status === 'accepted') {
                 return res.status(400).send('AlreadyAccepted');
             }
-            proposal.status = "accepted";
+            proposal.status = 'accepted';
             proposal.save()
             .then((proposal) => {
-                res.json(proposal);
-                mailer.sendAcceptMail(proposal);
+                Jobs.findById(req.params.jobId)
+                .then(job => {
+                    job.status = 'started';
+                    job.workingUser = proposal.proposalUser;
+                    job.finalAmount = proposal.proposedPrice;
+                    job.save()
+                    .then(job => {
+                        res.json(proposal);
+                        mailer.sendAcceptMail(proposal);
+                    })
+                })
             },(err) => next(err));
         }
     else {

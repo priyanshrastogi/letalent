@@ -10,7 +10,7 @@ import { FETCH_JOBS } from '../actions/types';
 class JobIndex extends Component {
 
     componentDidMount() {
-        this.props.fetchJobs({}, FETCH_JOBS);
+        this.props.fetchJobs({status: 'pending'}, FETCH_JOBS);
     }
 
     renderJobList() {
@@ -20,10 +20,7 @@ class JobIndex extends Component {
                     <div class="card">
                         <div class="card-body">
                             <h6 class="card-category">
-                                <span className="text-danger">
-                                    <i class="material-icons">trending_up</i> Trending
-                            </span>
-                                <span>&nbsp; &nbsp; &nbsp; &nbsp; </span>
+                                {job.tag === 'Trending' ? <span><span className="text-danger"><i class="material-icons">trending_up</i> Trending </span><span>&nbsp; &nbsp; &nbsp; &nbsp; </span></span>: '' }
                                 <span className="text-info">
                                     <i class="material-icons">local_offer</i> {job.category}
                             </span>

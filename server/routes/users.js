@@ -6,6 +6,7 @@ var User = require('../models/user');
 var UserProfile = require('../models/userProfile');
 var UserActivationToken = require('../models/userActivationToken');
 var ResetPasswordToken = require('../models/resetPasswordToken');
+var Wallet = require('../models/wallet');
 var authentication = require('../services/authentication');
 var mailer = require('../services/mailer');
 var router = express.Router();
@@ -72,6 +73,13 @@ router.post('/login', (req, res, next) => {
     res.json({ token: authentication.getUserToken(user), user: { _id: user._id, name: user.name, username: user.username, userType: user.userType }});
   })(req, res, next);
 });
+
+router.get('/wallet', authentication.requireAuth, (req, res, next) => {
+  Wallet.findOne({user: req.user._id})
+  .then(wallet => {
+    res.json(wallet);
+  })
+})
 
 router.get('/activate/:activationToken', (req, res, next) =>{
    UserActivationToken.findOne({token: req.params.activationToken})//finding the token

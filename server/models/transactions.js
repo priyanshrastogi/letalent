@@ -11,24 +11,9 @@ var transactionSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
-    paymentInitiated: {
-        type: Boolean,
-        default: true
-    },
-    userPaidToUs: {
-        type: Boolean,
-        default: false    
-    },
-    wePaidToUser: {
-        type: Boolean,
-        default: false
-    },
-    transactionIdForUser1: {
-        type: Number
-    },
-    transactionIdForUser2: {
-        type: Number
-    },
+    stripeTransactionId: {
+        type: String
+    }
      
 });
 

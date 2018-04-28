@@ -15,6 +15,7 @@ import ForgotPassword from './components/forgotpassword';
 import UserProfile from './components/userprofile';
 import JobSearch from './components/jobsearch';
 import JobDetails from './components/jobdetails';
+import JobProgress from './components/jobprogress';
 import AddNewJob from './components/addnewjob';
 import Page404 from './components/page404';
 import Dashboard from './components/dashboard';
@@ -43,6 +44,7 @@ ReactDOM.render(<Provider store={store}>
                     <Route exact path="/jobs" component={JobSearch} />
                     <Route exact path="/jobs/new" component={AddNewJob} />
                     <Route exact path="/jobs/:jobId" component={JobDetails} />
+                    <Route exact path="/jobs/:jobId/progress" component={JobProgress} />
                     <Route component={Page404} />
                 </Switch>
                 <Footer />

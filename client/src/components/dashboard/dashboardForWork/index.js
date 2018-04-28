@@ -3,55 +3,9 @@ import { connect } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
 import NavBarDefault from '../../navbardefault';
 import RenderJobsWork from './jobs';
+import Wallet from './wallet';
 
 class DashboardForWork extends Component {
-
-    renderJobList() {
-        return (
-            <div>
-                <div className="card">
-                    <div className="card-body" style={{ paddingLeft: '25px', paddingRight: '25px' }}>
-                        <h6 className="card-category">
-                            <span className="text-danger">
-                                <i class="material-icons">date_range</i> Due 05 March 2018
-                            </span>
-                        </h6>
-                        <div className="row">
-                            <div className="col-md-10">
-                                <h4 className="card-title"><a href="#pablo">Design a logo for an E-commerce Website</a></h4>
-                            </div>
-                            <div className="col-md-2">
-                                <h4 className="card-title text-info">In Progress</h4>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="card-footer" style={{ paddingLeft: '25px', paddingRight: '25px' }}>
-                        <p>Job Posted By <strong>Pulkit Luthra</strong></p>
-                    </div>
-                </div>
-                <div className="card">
-                    <div className="card-body" style={{ paddingLeft: '25px', paddingRight: '25px' }}>
-                        <h6 className="card-category">
-                            <span className="text-success">
-                                <i class="material-icons">date_range</i> Finished 01 March 2018
-                            </span>
-                        </h6>
-                        <div className="row">
-                            <div className="col-md-10">
-                                <h4 className="card-title"><a href="#pablo">Build an E-commerce Website</a></h4>
-                            </div>
-                            <div className="col-md-2">
-                                <h4 className="card-title text-success">Job Finished</h4>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="card-footer" style={{ paddingLeft: '25px', paddingRight: '25px' }}>
-                        <p>Job Posted By <strong>Pulkit Luthra</strong></p>
-                    </div>
-                </div>
-            </div>
-        )
-    }
 
     renderProposalList() {
         return (
@@ -152,11 +106,7 @@ class DashboardForWork extends Component {
                                         <div className="row">
                                             <div className="col-md-4 offset-md-4 text-center">
                                                 <div class="card card-pricing bg-info">
-                                                    <div class="card-body">
-                                                        <h1 class="card-title">&#8377;0.00</h1>
-                                                        <p class="card-description">
-                                                        </p>
-                                                    </div>
+                                                    <Wallet />
                                                 </div>
                                             </div>
                                         </div>

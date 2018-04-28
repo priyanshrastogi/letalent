@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
 import NavBarDefault from '../../navbardefault';
 import RenderJobsHire from './jobs';
+import Wallet from './wallet';
 
 class DashboardForHire extends Component {
 
@@ -38,11 +39,7 @@ class DashboardForHire extends Component {
                                         <div className="row">
                                             <div className="col-md-4 offset-md-4 text-center">
                                                 <div class="card card-pricing bg-info">
-                                                    <div class="card-body">
-                                                        <h1 class="card-title">&#8377;0.00</h1>
-                                                        <p class="card-description">
-                                                        </p>
-                                                    </div>
+                                                    <Wallet />
                                                 </div>
                                             </div>
                                         </div>

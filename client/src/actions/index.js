@@ -1,7 +1,9 @@
 import axios from 'axios';
 import { reset } from 'redux-form';
 import qs from 'qs';
-import { LOGIN_USER, LOGOUT_USER, AUTH_ERROR, POST_JOB, FETCH_JOBS, FETCH_JOB, FETCH_AND_APPEND_JOBS, FETCH_USER_PROFILE, POST_PROPOSAL, FETCH_PROPOSALS, ADD_USER_EDUCATION, ADD_USER_EXPERIENCE, ADD_USER_PROJECT, ADD_TO_VIEWED_LIST } from './types';
+import { LOGIN_USER, LOGOUT_USER, AUTH_ERROR, POST_JOB, FETCH_JOBS, FETCH_JOB, FETCH_AND_APPEND_JOBS, FETCH_USER_PROFILE, POST_PROPOSAL,
+    FETCH_PROPOSALS, ADD_USER_EDUCATION, ADD_USER_EXPERIENCE, ADD_USER_PROJECT, ADD_TO_VIEWED_LIST, UPDATE_JOB_PROGRESS,
+    FETCH_JOB_PROGRESS, FETCH_JOB_SUBMISSIONS, FETCH_USER_WALLET } from './types';
 
 const ROOT_URL = 'http://localhost';
 
@@ -17,7 +19,6 @@ export function loginUser(cred, callback) {
             localStorage.setItem('userId', res.data.user._id);
             localStorage.setItem('userType', res.data.user.userType);
             dispatch({ type: LOGIN_USER });
-            successAlert('Login Successful')
             callback();
         })
         .catch((error) => {
@@ -178,6 +179,25 @@ export function updateUserProfile(values, formName, callback) {
     }
 }
 
+export function fetchUserWallet() {
+    return function(dispatch) {
+        axios.get(`${ROOT_URL}/users/wallet`, {
+            headers: { Authorization: `bearer ${localStorage.getItem('token')}` }
+        })
+        .then((res) => {
+            dispatch({type: FETCH_USER_WALLET, payload: res.data});
+        })
+        .catch((error) => {    
+            if (error.response) {
+                showError('Some Error Occured!');
+            }
+            else if (error.request) {
+                showError('No Internet Connection');
+            }
+        });
+    }
+}
+
 // Jobs Related Actions
 
 export function postJob(values, callback) {
@@ -241,6 +261,7 @@ export function postProposal(jobId, proposal, callback) {
         })
         .then((res) => {
             dispatch({ type: POST_PROPOSAL, payload: res.data });
+            successAlert('Proposal Posted Successfully')
             callback();
         })
         .catch((error) => {    
@@ -282,7 +303,6 @@ export function acceptProposal(jobId, proposalId, callback) {
         .catch((error) => {    
             if (error.response) {
                 showError('Some Error Occured!');
-                callback();
             }
             else if (error.request) {
                 showError('No Internet Connection');
@@ -300,6 +320,105 @@ export function incView(jobId) {
     }
 }
 
+export function updateProgress(jobId, data, callback) {
+    return function(dispatch) {
+        axios.post(`${ROOT_URL}/jobs/${jobId}/progress`, data, {
+            headers: { Authorization: `bearer ${localStorage.getItem('token')}`}
+        })
+        .then((res) => {
+            dispatch({type: UPDATE_JOB_PROGRESS, payload: res.data})
+            callback();
+        })
+        .catch((error) => {    
+            if (error.response) {
+                showError('Some Error Occured!');
+            }
+            else if (error.request) {
+                showError('No Internet Connection');
+            }
+        });
+    }
+}
+
+export function fetchProgress(jobId) {
+    return function(dispatch) {
+        axios.get(`${ROOT_URL}/jobs/${jobId}/progress`)
+        .then((res) => {
+            dispatch({type: FETCH_JOB_PROGRESS, payload: res.data});
+        })
+        .catch((error) => {    
+            if (error.response) {
+                showError('Some Error Occured!');
+            }
+            else if (error.request) {
+                showError('No Internet Connection');
+            }
+        });
+    }
+}
+
+export function submitJob(jobId, data, callback) {
+    return function(dispatch) {
+        axios.post(`${ROOT_URL}/jobs/${jobId}/submit`, data, {
+            headers: { Authorization: `bearer ${localStorage.getItem('token')}`}
+        })
+        .then((res) => {
+            callback();
+        })
+        .catch((error) => {    
+            if (error.response) {
+                showError('Some Error Occured!');
+            }
+            else if (error.request) {
+                showError('No Internet Connection');
+            }
+        });
+    }
+}
+
+
+export function fetchSubmission(jobId) {
+    return function(dispatch) {
+        axios.get(`${ROOT_URL}/jobs/${jobId}/submissions`)
+        .then((res) => {
+            dispatch({type: FETCH_JOB_SUBMISSIONS, payload: res.data})
+        })
+        .catch((error) => {    
+            if (error.response) {
+                showError('Some Error Occured!');
+            }
+            else if (error.request) {
+                showError('No Internet Connection');
+            }
+        });
+    }
+}
+
+/**
+ * Handling Payments
+ */
+export function handlePayment(token, amount, description, forUser, forJob, callback) {
+    return function (dispatch) {
+        axios.post(`${ROOT_URL}/api/stripe`, {token, amount, description, forUser, forJob}, {
+            headers: { Authorization: `bearer ${localStorage.getItem('token')}` }
+        })
+        .then((res) => {
+            callback();
+        })
+        .catch((error) => {
+            if (error.response) {
+                showError('Payment Failed');
+            }
+            else if (error.request) {
+                showError('No Internet Connection');
+            }                       
+        })
+    }
+}
+
+ /**
+  * Error and Success Alerts
+  */
 function showError(error) {
     window.$.notify({
         message: error

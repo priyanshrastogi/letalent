@@ -24,16 +24,26 @@ class RenderJobsWork extends Component {
                             </h6>
                             <div className="row">
                                 <div className="col-md-10">
-                                    <h4 className="card-title"><a href="#pablo">{job.title}</a></h4>
+                                    {job.status === 'pending' ?
+                                        <h4 className="card-title"><Link to={`/jobs/${job._id}`}>{job.title}</Link></h4>
+                                        : <h4 className="card-title"><Link to={`/jobs/${job._id}/progress`}>{job.title}</Link></h4>}
                                 </div>
-                                <div className="col-md-2">
-                                    {job.jobFinished === true ? <h4 className="card-title text-success">Job Finished</h4>
-                                    : <h4 className="card-title text-info">In Progress</h4>}
+                                { job.status === 'started' ?
+                                    <div className="col-md-2">
+                                        <h4 className="card-title text-info">In Progress</h4>
+                                    </div>
+                                    : job.status === 'submitted' ?
+                                        <div className="col-md-2">
+                                            <h4 className="card-title text-success">Work Submitted</h4>
+                                        </div>
+                                    :
+                                    <div className="col-md-2">
+                                        <h4 className="card-title text-success">Paid</h4>
+                                    </div>
+                                }
+                                <div className="card-footer" style={{ paddingLeft: '25px', paddingRight: '25px' }}>
                                 </div>
                             </div>
-                        </div>
-                        <div className="card-footer" style={{ paddingLeft: '25px', paddingRight: '25px' }}>
-                            <p>Job Posted By <strong>Pulkit Luthra</strong></p>
                         </div>
                     </div>
                 )

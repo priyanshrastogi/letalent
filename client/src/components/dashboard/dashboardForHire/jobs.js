@@ -28,11 +28,27 @@ class RenderJobsHire extends Component {
                             </h6>
                             <div className="row">
                                 <div className="col-md-10">
-                                    <h4 className="card-title"><Link to={`/jobs/${job._id}`}>{job.title}</Link></h4>
+                                    {job.status === 'pending' ?
+                                        <h4 className="card-title"><Link to={`/jobs/${job._id}`}>{job.title}</Link></h4>
+                                    :   <h4 className="card-title"><Link to={`/jobs/${job._id}/progress`}>{job.title}</Link></h4>}
                                 </div>
+                                { job.status === 'pending' ?
                                 <div className="col-md-2">
                                     <h4 className="card-title text-warning">{`${job.proposals.length} Proposals`}</h4>
                                 </div>
+                                : job.status === 'started' ?
+                                <div className="col-md-2">
+                                    <h4 className="card-title text-info">In Progress</h4>
+                                </div>
+                                : job.status === 'submitted' ?
+                                    <div className="col-md-2">
+                                        <h4 className="card-title text-success">Work Submitted</h4>
+                                    </div>
+                                :
+                                <div className="col-md-2">
+                                    <h4 className="card-title text-success">Paid</h4>
+                                </div>
+                                }
                             </div>
                         </div>
                         <div className="card-footer" style={{ paddingLeft: '25px', paddingRight: '25px' }}>

@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
 import { Field, reduxForm } from 'redux-form';
-import { postProposal } from '../actions';
+import { isURL } from 'validator';
+import { submitJob } from '../../actions';
 
-class PostProposalModal extends Component {
+class SubmitJobModal extends Component {
 
     renderField(field) {
 
@@ -39,9 +40,9 @@ class PostProposalModal extends Component {
     }
 
     onSubmit(values) {
-        this.props.postProposal(this.props.jobId, values, () => {
-            window.$('#postProposalModal').modal('hide');
-            this.props.history.push('/jobs');
+        this.props.submitJob(this.props.jobId, values, () => {
+            window.$('#submitJobModal').modal('hide');
+            this.props.history.push('/dashboard');
         });
     };
 
@@ -51,24 +52,24 @@ class PostProposalModal extends Component {
         const { handleSubmit } = this.props //property added by Redux Form to handle form submit.
 
         return (
-            <div className="modal fade" id="postProposalModal" tabindex="-1" role="">
+            <div className="modal fade" id="submitJobModal" tabindex="-1" role="">
                 <div className="modal-dialog" role="document">
                     <div className="modal-content">
                         <div className="card card-signup card-plain">
                             <div className="col-md-10 ml-auto mr-auto">
-                                <div className="card-header card-header-info">
+                                <div className="card-header card-header-success">
                                     <button type="button" className="close" data-dismiss="modal" aria-hidden="true"><i className="material-icons">clear</i></button>
-                                    <h4 className="card-title">Post A Proposal</h4>
+                                    <h4 className="card-title">Submit Job</h4>
                                 </div>
                             </div>
                             <div className="modal-body">
                                 <div className="card-body">
                                     <form onSubmit={handleSubmit(this.onSubmit.bind(this))}>
-                                        <Field name="proposal" component={this.renderTextAreaField} label="Your Proposal" placeholder="Alreast 50 words" />
-                                        <Field name="proposedPrice" component={this.renderField} label="Proposed Price" placeholder="In INR" />
-                                        <Field name="daysToComplete" component={this.renderField} label="Expected Complete Time" placeholder="In Days" />
+                                        <Field name="reviewUrl" component={this.renderField} label="Review URL" placeholder="URL where Employer can review your work." />
+                                        <Field name="sourceUrl" component={this.renderField} label="Source URL" placeholder="URL of Source/files.(Dropbox, Github, Google Drive etc.)" />
+                                        <Field name="message" component={this.renderTextAreaField} label="Meassage" placeholder="Required" />
                                         <div className="text-center">
-                                            <button className="btn btn-info" type="submit">Send</button>
+                                            <button className="btn btn-success" type="submit">Submit</button>
                                         </div>
                                     </form>
                                 </div>
@@ -84,19 +85,19 @@ class PostProposalModal extends Component {
 function validate(values) {
     const errors = {};
 
-    if (!values.proposal) {
-        errors.proposal = 'Fill out this field';
+    if (!values.sourceUrl || isURL(values.sourceUrl)) {
+        errors.proposal = 'Invalid URL';
     }
 
-    if (!values.proposedPrice) {
-        errors.proposedPrice = 'Fill out this field';
+    if (!values.reviewUrl || isURL(values.reviewUrl)) {
+        errors.proposedPrice = 'Invalid URL';
     }
 
-    if (!values.daysToComplete) {
+    if (!values.message) {
         errors.daysToComplete = 'Fill out this field';
     }
 
     return errors
 }
 
-export default reduxForm({ validate, form: 'PostProposalForm' })(connect(null, { postProposal })(PostProposalModal));
+export default reduxForm({ validate, form: 'SubmitJobModal' })(connect(null, { submitJob })(SubmitJobModal));

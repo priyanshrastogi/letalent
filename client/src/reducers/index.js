@@ -7,6 +7,8 @@ import viewedListReducer from './viewedlist';
 import jobsPostedReducer from './jobsposted';
 import jobsWorkingReducer from './jobsworking';
 import proposalsReducer from './proposals';
+import jobsubmissionReducer from './jobsubmission';
+import walletReducer from './userwallet';
 
 const rootReducer = combineReducers({
     form: formReducer,
@@ -16,7 +18,9 @@ const rootReducer = combineReducers({
     viewedlist: viewedListReducer,
     jobsposted: jobsPostedReducer,
     jobsworking: jobsWorkingReducer,
-    proposals: proposalsReducer
+    proposals: proposalsReducer,
+    jobsubmissions: jobsubmissionReducer,
+    wallet: walletReducer
 });
 
 export default rootReducer;

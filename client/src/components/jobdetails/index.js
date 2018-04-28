@@ -21,7 +21,7 @@ class JobDetails extends Component {
         if (this.props.authenticated) {
 
             if(job) {
-                if (job.postedBy === localStorage.getItem('userId')) {
+                if (job.postedBy._id === localStorage.getItem('userId')) {
                     return (
                         <div>
                             <NavBarDefault />
@@ -34,7 +34,7 @@ class JobDetails extends Component {
                     return (
                         <div>
                             <NavBarDefault />
-                            <JobDetailsPublic job={job}/>
+                            <JobDetailsPublic job={job} history={this.props.history}/>
                         </div>
                     );
                 }

@@ -16,3 +16,7 @@ export const POST_PROPOSAL = 'post_proposal';
 export const FETCH_PROPOSALS = 'fetch_proposals';
 export const FETCH_SELF_PROPOSALS = 'fetch_self_proposals';
 export const ADD_TO_VIEWED_LIST = 'add_to_viewed_list';
+export const UPDATE_JOB_PROGRESS = 'update_job_progress';
+export const FETCH_JOB_PROGRESS = 'fetch_job_progress';
+export const FETCH_JOB_SUBMISSIONS = 'fetch_job_submissions';
+export const FETCH_USER_WALLET = 'fetch_user_wallet';

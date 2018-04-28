@@ -6,12 +6,10 @@ import { fetchJob } from '../../actions';
 import JobProgressWork from './work';
 import JobProgressHire from './hire';
 
-class JobDetails extends Component {
+class JobProgress extends Component {
 
-    componentDidMount() {
-        if (!this.props.job) {
-            this.props.fetchJob(this.props.match.params.jobId);
-        }
+    componentWillMount() {
+        this.props.fetchJob(this.props.match.params.jobId);
     }
 
     render() {
@@ -19,24 +17,33 @@ class JobDetails extends Component {
         const { job } = this.props;
 
         if (this.props.authenticated) {
-
             if (job) {
-                if (job.postedBy === localStorage.getItem('userId')) {
+                console.log(job.workingUser);
+                if (job.postedBy._id === localStorage.getItem('userId')) {
                     return (
                         <div>
                             <NavBarDefault />
-                            <JobProgressHire job={job} />
+                            <JobProgressHire job={job} history={this.props.history}/>
                         </div>
                     )
                 }
 
-                else if(job.workingUser === localStorage.getItem('userId')) {
+                else if(job.workingUser._id === localStorage.getItem('userId')) {
                     return (
                         <div>
                             <NavBarDefault />
-                            <JobDetailsPublic job={job} />
+                            <JobProgressWork job={job} history={this.props.history}/>
                         </div>
                     );
+                }
+
+                else {
+                    return (
+                        <div>
+                            <NavBarDefault />
+                            <h5 className="text-center">Unauthorized</h5>
+                        </div>
+                    )
                 }
             }
 
@@ -44,6 +51,7 @@ class JobDetails extends Component {
                 return (
                     <div>
                         <NavBarDefault />
+                        {"Loading" +console.log(job)}
                         <h5 className="text-center">Loading...</h5>
                     </div>
                 )
@@ -63,4 +71,4 @@ function mapStateToProps(state, ownProps) {
     return { authenticated: state.auth.authenticated, job: state.jobs[ownProps.match.params.jobId] };
 }
 
-export default connect(mapStateToProps, { fetchJob })(JobDetails);
+export default connect(mapStateToProps, { fetchJob })(JobProgress);

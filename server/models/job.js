@@ -22,13 +22,14 @@ var jobSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
+    status: {type: String, default: 'pending', enum:['pending', 'started', 'submitted', 'paid']},
     views: {type: Number, default: 1},
     tag: { type: String, default: null },
     jobFinished: { type: Boolean, default: false },
     startedOn: Date,
     finishedOn: Date,
     actualJobDuration: Number, //In hours
-    finalAmount: [jobAdditionalSchema.finalAmountSchema],
+    finalAmount: {type: Number},
     paid: {type: Boolean, default: false},
     transaction: {
         type: mongoose.Schema.Types.ObjectId,
